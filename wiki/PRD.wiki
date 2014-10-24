@@ -1,9 +1,10 @@
-#summary One-sentence summary of this page.
+#summary ТЗ проекта
 
 = Introduction =
 
-Add your content here.
+Техническое задание. Документ может изменяться на начальном этапе, т.к. не все возможности библиотек определены.
 
+== Goals ==
 
 = Details =
 
