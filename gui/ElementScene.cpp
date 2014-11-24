@@ -2,7 +2,7 @@
 
 #include <QDebug>
 #include <QGraphicsSceneMouseEvent>
-
+#include "AzGraphicsSelectedItemArrow.h"
 
 
 /*!
@@ -42,9 +42,11 @@ void ElementScene::mouseReleaseEvent(QGraphicsSceneMouseEvent * event) {
 }
 
 void ElementScene::enterMoving() {
-
 }
 
 void ElementScene::endMoving() {
 }
+
+AzGraphicsSelectedItemArrow selectedArrow;
+
 
