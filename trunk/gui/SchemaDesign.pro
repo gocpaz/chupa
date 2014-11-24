@@ -7,7 +7,8 @@ TEMPLATE = app
 
 HEADERS += MainWindow.h \
     AzGraphicsSvgItem.h \
-    ElementScene.h
+    ElementScene.h \
+    AzGraphicsSelectedItemArrow.h
 
 CONFIG+=debug_and_release
 
@@ -15,7 +16,8 @@ CONFIG+=debug_and_release
 SOURCES += main.cpp \
 	   MainWindow.cpp \
     ElementScene.cpp \
-    AzGraphicsSvgItem.cpp
+    AzGraphicsSvgItem.cpp \
+    AzGraphicsSelectedItemArrow.cpp
 
 
 FORMS    += MainWindow.ui
