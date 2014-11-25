@@ -17,8 +17,7 @@ private:
     void enterMoving();
     void endMoving();
     bool mIsMovingItems;
-    AzGraphicsSelectedItemArrow m_selectedArrow;
-    AzGraphicsSelectedItemArrow& operator = (const AzGraphicsSelectedItemArrow&){}
+    AzGraphicsSelectedItemArrow mSelectedArrow;
 };
 
 #endif // ELEMENTSCENE_H

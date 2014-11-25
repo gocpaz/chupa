@@ -4,8 +4,9 @@ class AzGraphicsSelectedItemArrow
 {
 public:
     AzGraphicsSelectedItemArrow(){}
-  ~AzGraphicsSelectedItemArrow(){}
+   ~AzGraphicsSelectedItemArrow(){}
 private:
     AzGraphicsSelectedItemArrow(const AzGraphicsSelectedItemArrow&);
+    AzGraphicsSelectedItemArrow& operator = (const AzGraphicsSelectedItemArrow&){}
 };
 #endif // AZGRAPHICSSELECTEDITEMARROW_H
