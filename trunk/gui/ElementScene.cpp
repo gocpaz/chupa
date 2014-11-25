@@ -47,6 +47,5 @@ void ElementScene::enterMoving() {
 void ElementScene::endMoving() {
 }
 
-AzGraphicsSelectedItemArrow selectedArrow;
 
 

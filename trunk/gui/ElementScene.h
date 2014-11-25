@@ -3,6 +3,7 @@
 
 #include <QGraphicsScene>
 #include <QGraphicsItem>
+#include "AzGraphicsSelectedItemArrow.h"
 
 class ElementScene : public QGraphicsScene
 {
@@ -16,6 +17,8 @@ private:
     void enterMoving();
     void endMoving();
     bool mIsMovingItems;
+    AzGraphicsSelectedItemArrow m_selectedArrow;
+    AzGraphicsSelectedItemArrow& operator = (const AzGraphicsSelectedItemArrow&){}
 };
 
 #endif // ELEMENTSCENE_H
