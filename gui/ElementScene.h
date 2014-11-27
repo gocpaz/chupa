@@ -13,6 +13,7 @@ public:
 protected:
     void mouseMoveEvent(QGraphicsSceneMouseEvent * mouseEvent);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent * mouseEvent);
+    void drawForeground(QPainter *painter, const QRectF &rect);
 private:
     void enterMoving();
     void endMoving();
