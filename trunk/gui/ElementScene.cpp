@@ -47,5 +47,8 @@ void ElementScene::enterMoving() {
 void ElementScene::endMoving() {
 }
 
+void ElementScene::drawForeground(QPainter *painter, const QRectF &rect){
 
+    QGraphicsScene::drawForeground(painter, rect);
+}
 
