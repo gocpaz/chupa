@@ -50,5 +50,11 @@ void ElementScene::endMoving() {
 void ElementScene::drawForeground(QPainter *painter, const QRectF &rect){
 
     QGraphicsScene::drawForeground(painter, rect);
+
+    QList<QGraphicsItem*> selected = selectedItems();
+    if(selected.size()>0){
+      mSelectedArrow.show(painter,selected[0]);
+    }
+
 }
 
