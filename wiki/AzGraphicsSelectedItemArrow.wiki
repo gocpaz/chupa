@@ -1,11 +1,16 @@
-#summary One-sentence summary of this page.
+#summary Описание класса AzGraphicsSelectedItemArrow
 
 = Introduction =
-
-Add your content here.
+Класс предназначен для отображения элементов управления (стрелочек) итемов на сцене.
 
 
 = Details =
+Класс должен уметь:
+
+ - отображать стрелочки вокруг объекта
+ - реагировать "активизацию" стрелочки (цветом)
+ - реализовать изменение параметров объекта (трансформацию выделенного объекта)
+
 
 Add your content here.  Format your content with:
   * Text in *bold* or _italic_
