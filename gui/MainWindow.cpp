@@ -19,6 +19,7 @@ void MainWindow::addElementEditTab() {
 
    scene->setSceneRect(-10,-10,5000,5000);
    QGraphicsView *view = new QGraphicsView(scene,this);
+   view->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
 
    QGraphicsSvgItem *svg = new AzGraphicsSvgItem("comp.svg");
    QGraphicsSvgItem *svg2 = new AzGraphicsSvgItem("comp.svg");
