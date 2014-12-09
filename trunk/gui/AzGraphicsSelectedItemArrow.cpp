@@ -20,12 +20,26 @@ QPolygon AzGraphicsSelectedItemArrow::arrowPolygon(){
 }
 
 void AzGraphicsSelectedItemArrow::show(QPainter *painter, QGraphicsItem *){
-   //QPoint point(arrowPos(Npos));
-    QPoint point(arrowPos(SWpos));
-    QPolygon polygone = arrowPolygon();
-    polygone.translate(point);
-    painter->drawPolygon(polygone);
-    //qDebug() <<draw ;
+
+    if (mScene->selectedItems().size() == 0)
+        return;
+
+    QPolygon polygone;
+
+    painter->save();
+    painter->setBrush(Qt::yellow);
+
+    QPoint point;
+
+    for (int i = 0; i < 8;++i) {
+        point = arrowPos((SideLight)i);
+        polygone = arrowPolygon();
+        polygone.translate(point);
+        painter->drawPolygon(polygone);
+
+    }
+    painter->restore();
+
 }
 
 QPoint AzGraphicsSelectedItemArrow::arrowPos(SideLight aPos) const {
@@ -36,10 +50,9 @@ QPoint AzGraphicsSelectedItemArrow::arrowPos(SideLight aPos) const {
     QPointF posi = item->pos();
     QRectF bound = item->boundingRect();
     QPoint coordinateArrow;
-    QRectF boundArrow = arrowPolygon().boundingRect();
     switch (aPos) {
     case Npos:
-        coordinateArrow =  QPoint(posi.x()+bound.center().x(),posi.y()- boundArrow.height());
+        coordinateArrow =  QPoint(posi.x()+bound.center().x(),posi.y());
         break;
     case Spos:
         coordinateArrow =  QPoint(posi.x()+bound.center().x(),posi.y()+bound.height());
@@ -52,12 +65,16 @@ QPoint AzGraphicsSelectedItemArrow::arrowPos(SideLight aPos) const {
         break;
     case NEpos:
         coordinateArrow =  QPoint(posi.x()+bound.width(),posi.y());
+        break;
     case NWpos:
         coordinateArrow =  QPoint(posi.x(),posi.y());
+        break;
     case SEpos:
         coordinateArrow =  QPoint(posi.x()+bound.width(),posi.y()+bound.height());
+        break;
     case SWpos:
         coordinateArrow =  QPoint(posi.x(),posi.y()+bound.height());
+        break;
     case NotArrow:
       break;
     };
