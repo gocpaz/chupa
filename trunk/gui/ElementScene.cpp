@@ -9,9 +9,8 @@
  * \brief ElementScene::ElementScene Конструктор
  * \param parent
  */
-
 ElementScene::ElementScene(QObject *parent) :
-    QGraphicsScene(parent),mIsMovingItems(false) {
+    QGraphicsScene(parent),mIsMovingItems(false),mSelectedArrow(this) {
 }
 
 void ElementScene::mouseMoveEvent(QGraphicsSceneMouseEvent * event) {
@@ -55,6 +54,5 @@ void ElementScene::drawForeground(QPainter *painter, const QRectF &rect){
     if(selected.size()>0){
       mSelectedArrow.show(painter,selected[0]);
     }
-
 }
 
