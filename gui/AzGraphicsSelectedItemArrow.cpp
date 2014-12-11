@@ -2,21 +2,62 @@
 #include <QDebug>
 #include <QGraphicsScene>
 #include <QGraphicsItem>
+#include <QtMath>
 
 
 AzGraphicsSelectedItemArrow::AzGraphicsSelectedItemArrow(QGraphicsScene *scene):mScene(scene){}
 
-
-QPolygon AzGraphicsSelectedItemArrow::arrowPolygon(){
+QPolygon AzGraphicsSelectedItemArrow::arrowPolygon(SideLight trPos){
     QPolygon poligon;
     poligon << QPoint(0,0)
-            << QPoint(5,6)
-            << QPoint(2,6)
-            << QPoint(2,15)
-            << QPoint(-2,15)
-            << QPoint(-2,6)
-            << QPoint(-5,6);
-    return poligon;
+            << QPoint(7,6)
+            << QPoint(2.5,6)
+            << QPoint(2.5,15)
+            << QPoint(-2.5,15)
+            << QPoint(-2.5,6)
+            << QPoint(-7,6);
+
+
+    qreal degreesAngl;
+
+   switch (trPos) {
+   case Npos:
+       degreesAngl = 180.0;
+       break;
+   case NEpos:
+       degreesAngl = 135.0;
+       break;
+   case Epos:
+       degreesAngl = 90;
+       break;
+   case SEpos:
+       degreesAngl = 45.0;
+       break;
+   case SWpos:
+       degreesAngl = -45;
+       break;
+   case Wpos:
+       degreesAngl = -90;
+       break;
+   case NWpos:
+       degreesAngl = -135;
+       break;
+   case Spos:
+       return poligon;
+   default:
+      return QPolygon();
+   }
+
+   qreal degCos = qCos(qDegreesToRadians(degreesAngl));
+   qreal degSin = qSin(qDegreesToRadians(degreesAngl));
+
+   QPolygon res;
+   for (int i = 0; i < poligon.size();++i) {
+    qreal x = poligon.point(i).x()*degCos + poligon.point(i).y()*degSin;
+    qreal y = -poligon.point(i).x()*degSin + poligon.point(i).y()*degCos;
+    res << QPoint(x,y);
+   }
+    return res;
 }
 
 void AzGraphicsSelectedItemArrow::show(QPainter *painter, QGraphicsItem *){
@@ -33,10 +74,9 @@ void AzGraphicsSelectedItemArrow::show(QPainter *painter, QGraphicsItem *){
 
     for (int i = 0; i < 8;++i) {
         point = arrowPos((SideLight)i);
-        polygone = arrowPolygon();
+        polygone = arrowPolygon((SideLight)i);
         polygone.translate(point);
         painter->drawPolygon(polygone);
-
     }
     painter->restore();
 
