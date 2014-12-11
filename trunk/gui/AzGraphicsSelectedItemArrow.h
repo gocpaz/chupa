@@ -21,7 +21,7 @@ public:
    AzGraphicsSelectedItemArrow(QGraphicsScene *);
    ~AzGraphicsSelectedItemArrow(){}
    void show(QPainter* painter, QGraphicsItem* item);
-   QPolygon static arrowPolygon();
+   QPolygon static arrowPolygon(SideLight);
    QPoint arrowPos(SideLight) const;
 private:
     AzGraphicsSelectedItemArrow(const AzGraphicsSelectedItemArrow&);
