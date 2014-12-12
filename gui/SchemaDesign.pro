@@ -8,7 +8,8 @@ TEMPLATE = app
 HEADERS += MainWindow.h \
     AzGraphicsSvgItem.h \
     ElementScene.h \
-    AzGraphicsSelectedItemArrow.h
+    AzGraphicsSelectedItemArrow.h \
+    AzGraphicsPoligonItem.h
 
 CONFIG+=debug_and_release
 
@@ -17,7 +18,8 @@ SOURCES += main.cpp \
 	   MainWindow.cpp \
     ElementScene.cpp \
     AzGraphicsSvgItem.cpp \
-    AzGraphicsSelectedItemArrow.cpp
+    AzGraphicsSelectedItemArrow.cpp \
+    AzGraphicsPoligonItem.cpp
 
 
 FORMS    += MainWindow.ui

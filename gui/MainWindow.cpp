@@ -7,6 +7,7 @@
 
 #include "ElementScene.h"
 #include "AzGraphicsSvgItem.h"
+#include "AzGraphicsPoligonItem.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
@@ -20,6 +21,12 @@ void MainWindow::addElementEditTab() {
    scene->setSceneRect(-10,-10,5000,5000);
    QGraphicsView *view = new QGraphicsView(scene,this);
    view->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
+
+   AzGraphicsPoligonItem *arr = new AzGraphicsPoligonItem;
+   arr->setPos(200,250);
+   //arr->setFlag(QGraphicsItem::ItemIs);
+   scene->addItem(arr);
+
 
    QGraphicsSvgItem *svg = new AzGraphicsSvgItem("comp.svg");
    QGraphicsSvgItem *svg2 = new AzGraphicsSvgItem("comp.svg");

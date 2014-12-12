@@ -3,6 +3,7 @@
 #include <QDebug>
 #include <QGraphicsSceneMouseEvent>
 #include "AzGraphicsSelectedItemArrow.h"
+#include "AzGraphicsPoligonItem.h"
 
 
 /*!

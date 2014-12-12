@@ -5,7 +5,9 @@
 #include <QtMath>
 
 
-AzGraphicsSelectedItemArrow::AzGraphicsSelectedItemArrow(QGraphicsScene *scene):mScene(scene){}
+AzGraphicsSelectedItemArrow::AzGraphicsSelectedItemArrow(QGraphicsScene *scene){
+    this->mScene = scene;
+}
 
 QPolygon AzGraphicsSelectedItemArrow::arrowPolygon(SideLight trPos){
     QPolygon poligon;
@@ -16,7 +18,6 @@ QPolygon AzGraphicsSelectedItemArrow::arrowPolygon(SideLight trPos){
             << QPoint(-2.5,15)
             << QPoint(-2.5,6)
             << QPoint(-7,6);
-
 
     qreal degreesAngl;
 
