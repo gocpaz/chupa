@@ -1,4 +1,4 @@
-#include "azgraphicspoligonitem.h"
+#include "AzGraphicsPoligonItem.h"
 #include <QBrush>
 #include <QDebug>
 
