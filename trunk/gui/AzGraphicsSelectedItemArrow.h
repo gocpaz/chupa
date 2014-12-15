@@ -27,7 +27,7 @@ private:
     AzGraphicsSelectedItemArrow(const AzGraphicsSelectedItemArrow&);
     AzGraphicsSelectedItemArrow& operator = (const AzGraphicsSelectedItemArrow&){}
     QGraphicsScene *mScene;
-    inline bool isHasSelectedItem()const;
+    inline bool isHasSelectedItem()const { return mScene->selectedItems().size() > 0;}
     QGraphicsItem* selectedItem() const;
 };
 #endif // AZGRAPHICSSELECTEDITEMARROW_H
