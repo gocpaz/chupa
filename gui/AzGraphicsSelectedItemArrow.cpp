@@ -66,7 +66,7 @@ QPolygon AzGraphicsSelectedItemArrow::arrowPolygon(SideLight trPos){
 
 void AzGraphicsSelectedItemArrow::show(QPainter *painter, QGraphicsItem *){
 
-    if (mScene->selectedItems().size() == 0)
+    if (!isHasSelectedItem())
         return;
 
     QPolygon polygone;
@@ -82,10 +82,11 @@ void AzGraphicsSelectedItemArrow::show(QPainter *painter, QGraphicsItem *){
 }
 
 QPoint AzGraphicsSelectedItemArrow::arrowPos(SideLight aPos) const {
-    QList<QGraphicsItem*> items = mScene->selectedItems();
-    if (items.size() == 0)
+
+    QGraphicsItem *item = selectedItem();
+    if (item == 0)
         return QPoint();
-    QGraphicsItem *item = items[0];
+
     QPointF posi = item->pos();
     QRectF bound = item->boundingRect();
     QPoint coordinateArrow;
@@ -119,11 +120,12 @@ QPoint AzGraphicsSelectedItemArrow::arrowPos(SideLight aPos) const {
     };
     return coordinateArrow;
 }
-bool AzGraphicsSelectedItemArrow::isHasSelectedItem(){
 
-}
-
-QGraphicsItem* AzGraphicsSelectedItemArrow::selectedItem(){
-
+QGraphicsItem* AzGraphicsSelectedItemArrow::selectedItem()const {
+//    if(isHasSelectedItem()) {
+//        return  mScene->selectedItems()[0];
+//    }
+//    return 0;
+    return isHasSelectedItem() ?  mScene->selectedItems()[0] : 0;
 }
 
