@@ -23,11 +23,13 @@ public:
    void show(QPainter* painter, QGraphicsItem* item);
    QPolygon arrowPolygon(SideLight);
    QPoint arrowPos(SideLight) const;
+   static QPolygon drPoligon();
 private:
     AzGraphicsSelectedItemArrow(const AzGraphicsSelectedItemArrow&);
     AzGraphicsSelectedItemArrow& operator = (const AzGraphicsSelectedItemArrow&){}
     QGraphicsScene *mScene;
     inline bool isHasSelectedItem()const { return mScene->selectedItems().size() > 0;}
     QGraphicsItem* selectedItem() const;
+
 };
 #endif // AZGRAPHICSSELECTEDITEMARROW_H

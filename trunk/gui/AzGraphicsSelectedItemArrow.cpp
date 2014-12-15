@@ -4,20 +4,13 @@
 #include <QGraphicsItem>
 #include <QtMath>
 
+static const QPolygon polygon = AzGraphicsSelectedItemArrow::drPoligon();
 
 AzGraphicsSelectedItemArrow::AzGraphicsSelectedItemArrow(QGraphicsScene *scene){
     this->mScene = scene;
 }
 
 QPolygon AzGraphicsSelectedItemArrow::arrowPolygon(SideLight trPos){
-    QPolygon poligon;
-    poligon << QPoint(0,0)
-            << QPoint(7,6)
-            << QPoint(2.5,6)
-            << QPoint(2.5,15)
-            << QPoint(-2.5,15)
-            << QPoint(-2.5,6)
-            << QPoint(-7,6);
 
     qreal degreesAngl;
 
@@ -54,9 +47,9 @@ QPolygon AzGraphicsSelectedItemArrow::arrowPolygon(SideLight trPos){
    qreal degSin = qSin(qDegreesToRadians(degreesAngl));
 
    QPolygon res;
-   for (int i = 0; i < poligon.size();++i) {
-    qreal x = poligon.point(i).x()*degCos + poligon.point(i).y()*degSin;
-    qreal y = -poligon.point(i).x()*degSin + poligon.point(i).y()*degCos;
+   for (int i = 0; i < polygon.size();++i) {
+    qreal x = polygon.point(i).x()*degCos + polygon.point(i).y()*degSin;
+    qreal y = -polygon.point(i).x()*degSin + polygon.point(i).y()*degCos;
     res << QPoint(x,y);
    }
    QPoint point = arrowPos(trPos); // Возвращает координаты
@@ -128,4 +121,14 @@ QGraphicsItem* AzGraphicsSelectedItemArrow::selectedItem()const {
 //    return 0;
     return isHasSelectedItem() ?  mScene->selectedItems()[0] : 0;
 }
-
+ QPolygon AzGraphicsSelectedItemArrow::drPoligon(){
+    QPolygon poligon;
+    poligon << QPoint(0,0)
+            << QPoint(7,6)
+            << QPoint(2.5,6)
+            << QPoint(2.5,15)
+            << QPoint(-2.5,15)
+            << QPoint(-2.5,6)
+            << QPoint(-7,6);
+    return poligon;
+}
