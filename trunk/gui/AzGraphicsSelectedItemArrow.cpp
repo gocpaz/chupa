@@ -44,7 +44,8 @@ QPolygon AzGraphicsSelectedItemArrow::arrowPolygon(SideLight trPos){
        degreesAngl = -135;
        break;
    case Spos:
-       return poligon;
+       degreesAngl = 0;
+       break;
    default:
       return QPolygon();
    }
@@ -58,7 +59,9 @@ QPolygon AzGraphicsSelectedItemArrow::arrowPolygon(SideLight trPos){
     qreal y = -poligon.point(i).x()*degSin + poligon.point(i).y()*degCos;
     res << QPoint(x,y);
    }
-    return res;
+   QPoint point = arrowPos(trPos); // Возвращает координаты
+   res.translate(point); // Растанавливает полигони согласно координат
+   return res;
 }
 
 void AzGraphicsSelectedItemArrow::show(QPainter *painter, QGraphicsItem *){
@@ -70,14 +73,9 @@ void AzGraphicsSelectedItemArrow::show(QPainter *painter, QGraphicsItem *){
 
     painter->save();
     painter->setBrush(Qt::yellow);
-
-    QPoint point;
-
-    for (int i = 0; i < 8;++i) {
-        point = arrowPos((SideLight)i);
-        polygone = arrowPolygon((SideLight)i);
-        polygone.translate(point);
-        painter->drawPolygon(polygone);
+    for (int i = 0; i < 8; ++i) {
+        polygone = arrowPolygon((SideLight)i); // Возвращает положение стрелки
+        painter->drawPolygon(polygone); // Рисует полигоны
     }
     painter->restore();
 
@@ -120,5 +118,12 @@ QPoint AzGraphicsSelectedItemArrow::arrowPos(SideLight aPos) const {
       break;
     };
     return coordinateArrow;
+}
+bool AzGraphicsSelectedItemArrow::isHasSelectedItem(){
+
+}
+
+QGraphicsItem* AzGraphicsSelectedItemArrow::selectedItem(){
+
 }
 
