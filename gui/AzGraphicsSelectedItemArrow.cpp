@@ -22,6 +22,7 @@ static const QPolygon polygon = drPoligon();
 
 AzGraphicsSelectedItemArrow::AzGraphicsSelectedItemArrow(QGraphicsScene *scene){
     this->mScene = scene;
+    this->mSideLight = NotArrow;
 }
 
 QPolygon AzGraphicsSelectedItemArrow::arrowPolygon(SideLight trPos){
@@ -139,7 +140,9 @@ void AzGraphicsSelectedItemArrow::mouseMoveEvent(QGraphicsSceneMouseEvent *event
     if (!isHasSelectedItem())
         return;
     if (inMousePos(event))
-        qDebug() << "Ura";
+        hoverEnterEvent();
+        //qDebug() << "Ura";
+
 }
 
 bool AzGraphicsSelectedItemArrow::inMousePos(QGraphicsSceneMouseEvent *event) {
@@ -151,4 +154,12 @@ bool AzGraphicsSelectedItemArrow::inMousePos(QGraphicsSceneMouseEvent *event) {
             return true;
     }
     return false;
+}
+
+void AzGraphicsSelectedItemArrow::hoverEnterEvent(){
+    qDebug() <<"Enter";
+}
+
+void AzGraphicsSelectedItemArrow::hoverLeaveEvent(){
+
 }

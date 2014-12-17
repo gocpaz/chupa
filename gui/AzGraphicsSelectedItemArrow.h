@@ -33,6 +33,6 @@ private:
     QGraphicsScene *mScene;
     inline bool isHasSelectedItem()const { return mScene->selectedItems().size() > 0;}
     QGraphicsItem* selectedItem() const;
-    SideLight mSideLight = NotArrow;
+    SideLight mSideLight;
 };
 #endif // AZGRAPHICSSELECTEDITEMARROW_H
