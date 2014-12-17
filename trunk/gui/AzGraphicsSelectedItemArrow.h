@@ -20,16 +20,19 @@ public:
     };
    AzGraphicsSelectedItemArrow(QGraphicsScene *);
    ~AzGraphicsSelectedItemArrow(){}
-   void show(QPainter* painter, QGraphicsItem* item);
+   void show(QPainter* painter);
    QPolygon arrowPolygon(SideLight);
    QPoint arrowPos(SideLight) const;
    void mouseMoveEvent(QGraphicsSceneMouseEvent* mauseEvent);
+   bool inMousePos(QGraphicsSceneMouseEvent* mauseEvent);
+   void hoverEnterEvent();
+   void hoverLeaveEvent();
 private:
     AzGraphicsSelectedItemArrow(const AzGraphicsSelectedItemArrow&);
     AzGraphicsSelectedItemArrow& operator = (const AzGraphicsSelectedItemArrow&){}
     QGraphicsScene *mScene;
     inline bool isHasSelectedItem()const { return mScene->selectedItems().size() > 0;}
     QGraphicsItem* selectedItem() const;
-
+    SideLight mSideLight = NotArrow;
 };
 #endif // AZGRAPHICSSELECTEDITEMARROW_H

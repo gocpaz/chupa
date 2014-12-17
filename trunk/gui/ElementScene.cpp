@@ -25,6 +25,7 @@ void ElementScene::mouseMoveEvent(QGraphicsSceneMouseEvent * event) {
             }
         }
     }
+    mSelectedArrow.mouseMoveEvent(event);
     QGraphicsScene::mouseMoveEvent(event);
 }
 
@@ -51,9 +52,7 @@ void ElementScene::drawForeground(QPainter *painter, const QRectF &rect){
 
     QGraphicsScene::drawForeground(painter, rect);
 
-    QList<QGraphicsItem*> selected = selectedItems();
-    if(selected.size()>0){
-      mSelectedArrow.show(painter,selected[0]);
+      mSelectedArrow.show(painter);
     }
-}
+
 

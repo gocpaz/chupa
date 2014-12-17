@@ -3,6 +3,7 @@
 #include <QGraphicsScene>
 #include <QGraphicsItem>
 #include <QtMath>
+#include <QGraphicsSceneMouseEvent>
 
 QPolygon drPoligon(){
    QPolygon poligon;
@@ -17,6 +18,7 @@ QPolygon drPoligon(){
 }
 
 static const QPolygon polygon = drPoligon();
+
 
 AzGraphicsSelectedItemArrow::AzGraphicsSelectedItemArrow(QGraphicsScene *scene){
     this->mScene = scene;
@@ -69,7 +71,7 @@ QPolygon AzGraphicsSelectedItemArrow::arrowPolygon(SideLight trPos){
    return res;
 }
 
-void AzGraphicsSelectedItemArrow::show(QPainter *painter, QGraphicsItem *){
+void AzGraphicsSelectedItemArrow::show(QPainter *painter){
 
     if (!isHasSelectedItem())
         return;
@@ -133,7 +135,20 @@ QGraphicsItem* AzGraphicsSelectedItemArrow::selectedItem()const {
 //    return 0;
     return isHasSelectedItem() ?  mScene->selectedItems()[0] : 0;
 }
-//void AzGraphicsSelectedItemArrow::mouseMoveEvent(QGraphicsSceneMouseEvent *event){
+void AzGraphicsSelectedItemArrow::mouseMoveEvent(QGraphicsSceneMouseEvent *event){
+    if (!isHasSelectedItem())
+        return;
+    if (inMousePos(event))
+        qDebug() << "Ura";
+}
 
-//}
-
+bool AzGraphicsSelectedItemArrow::inMousePos(QGraphicsSceneMouseEvent *event) {
+    QPolygon polygone;
+    for (int i = 0; i<8; ++i) {
+        polygone = arrowPolygon( (SideLight)i);
+        QPoint mousePos(event->scenePos().x(),event->scenePos().y());
+        if (polygone.containsPoint(mousePos,Qt::OddEvenFill))//Возвращает истину, если данная точка находится внутри многоугольника в соответствии с указанным FillRule; в противном случае возвращает ложь.
+            return true;
+    }
+    return false;
+}
