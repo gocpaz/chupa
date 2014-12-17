@@ -133,7 +133,7 @@ QGraphicsItem* AzGraphicsSelectedItemArrow::selectedItem()const {
 //    return 0;
     return isHasSelectedItem() ?  mScene->selectedItems()[0] : 0;
 }
-void AzGraphicsSelectedItemArrow::mouseMoveEvent(QGraphicsSceneMouseEvent *event){
-    mScene->mouseMoveEvent(event);
-}
+//void AzGraphicsSelectedItemArrow::mouseMoveEvent(QGraphicsSceneMouseEvent *event){
+
+//}
 
