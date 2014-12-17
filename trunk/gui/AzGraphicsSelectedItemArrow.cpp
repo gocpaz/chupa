@@ -4,7 +4,19 @@
 #include <QGraphicsItem>
 #include <QtMath>
 
-static const QPolygon polygon = AzGraphicsSelectedItemArrow::drPoligon();
+QPolygon drPoligon(){
+   QPolygon poligon;
+   poligon << QPoint(0,0)
+           << QPoint(7,6)
+           << QPoint(2.5,6)
+           << QPoint(2.5,15)
+           << QPoint(-2.5,15)
+           << QPoint(-2.5,6)
+           << QPoint(-7,6);
+   return poligon;
+}
+
+static const QPolygon polygon = drPoligon();
 
 AzGraphicsSelectedItemArrow::AzGraphicsSelectedItemArrow(QGraphicsScene *scene){
     this->mScene = scene;
@@ -121,14 +133,7 @@ QGraphicsItem* AzGraphicsSelectedItemArrow::selectedItem()const {
 //    return 0;
     return isHasSelectedItem() ?  mScene->selectedItems()[0] : 0;
 }
- QPolygon AzGraphicsSelectedItemArrow::drPoligon(){
-    QPolygon poligon;
-    poligon << QPoint(0,0)
-            << QPoint(7,6)
-            << QPoint(2.5,6)
-            << QPoint(2.5,15)
-            << QPoint(-2.5,15)
-            << QPoint(-2.5,6)
-            << QPoint(-7,6);
-    return poligon;
+void AzGraphicsSelectedItemArrow::mouseMoveEvent(QGraphicsSceneMouseEvent *event){
+    mScene->mouseMoveEvent(event);
 }
+

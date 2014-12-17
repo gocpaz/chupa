@@ -10,6 +10,7 @@ class ElementScene : public QGraphicsScene
 {
 public:
     explicit ElementScene(QObject *parent = 0);
+
 protected:
     void mouseMoveEvent(QGraphicsSceneMouseEvent * mouseEvent);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent * mouseEvent);
