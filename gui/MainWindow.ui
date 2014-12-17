@@ -51,7 +51,7 @@
           <x>0</x>
           <y>0</y>
           <width>200</width>
-          <height>496</height>
+          <height>502</height>
          </rect>
         </property>
         <attribute name="label">
@@ -59,7 +59,7 @@
         </attribute>
        </widget>
       </widget>
-      <widget class="QWidget" name="">
+      <widget class="QWidget" name="layoutWidget">
        <layout class="QVBoxLayout" name="verticalLayout">
         <item>
          <widget class="QTabWidget" name="tabWidget">
@@ -95,9 +95,6 @@
      </widget>
     </item>
    </layout>
-   <zorder>splitter</zorder>
-   <zorder>zoomSpider</zorder>
-   <zorder>tabWidget</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -105,7 +102,7 @@
      <x>0</x>
      <y>0</y>
      <width>576</width>
-     <height>19</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>
@@ -122,6 +119,8 @@
    </attribute>
   </widget>
  </widget>
- <resources/>
+ <resources>
+  <include location="res.qrc"/>
+ </resources>
  <connections/>
 </ui>
