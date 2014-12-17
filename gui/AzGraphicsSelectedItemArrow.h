@@ -23,7 +23,7 @@ public:
    void show(QPainter* painter, QGraphicsItem* item);
    QPolygon arrowPolygon(SideLight);
    QPoint arrowPos(SideLight) const;
-   static QPolygon drPoligon();
+   void mouseMoveEvent(QGraphicsSceneMouseEvent* mauseEvent);
 private:
     AzGraphicsSelectedItemArrow(const AzGraphicsSelectedItemArrow&);
     AzGraphicsSelectedItemArrow& operator = (const AzGraphicsSelectedItemArrow&){}
