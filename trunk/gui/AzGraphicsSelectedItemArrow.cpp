@@ -5,6 +5,9 @@
 #include <QtMath>
 #include <QGraphicsSceneMouseEvent>
 
+const Qt::GlobalColor normalColor =  Qt::yellow;
+const Qt::GlobalColor selectedColor = Qt::green;
+
 QPolygon drPoligon(){
    QPolygon poligon;
    poligon << QPoint(0,0)
@@ -63,9 +66,9 @@ QPolygon AzGraphicsSelectedItemArrow::arrowPolygon(SideLight trPos){
 
    QPolygon res;
    for (int i = 0; i < polygon.size();++i) {
-    qreal x = polygon.point(i).x()*degCos + polygon.point(i).y()*degSin;
-    qreal y = -polygon.point(i).x()*degSin + polygon.point(i).y()*degCos;
-    res << QPoint(x,y);
+      qreal x = polygon.point(i).x()*degCos + polygon.point(i).y()*degSin;
+      qreal y = -polygon.point(i).x()*degSin + polygon.point(i).y()*degCos;
+      res << QPoint(x,y);
    }
    QPoint point = arrowPos(trPos); // Возвращает координаты
    res.translate(point); // Растанавливает полигони согласно координат
@@ -80,7 +83,7 @@ void AzGraphicsSelectedItemArrow::show(QPainter *painter){
     QPolygon polygone;
 
     painter->save();
-    painter->setBrush(Qt::yellow);
+    painter->setBrush(normalColor);
     for (int i = 0; i < 8; ++i) {
         polygone = arrowPolygon((SideLight)i); // Возвращает положение стрелки
         painter->drawPolygon(polygone); // Рисует полигоны
@@ -89,6 +92,12 @@ void AzGraphicsSelectedItemArrow::show(QPainter *painter){
 
 }
 
+/*!
+ * \brief AzGraphicsSelectedItemArrow::arrowPos Возвращает полигон
+ * \param aPos - позиция стрелки вокруг выделенного объекта
+ * \return полигон
+ * Возращает полигон в виде стрелки
+ */
 QPoint AzGraphicsSelectedItemArrow::arrowPos(SideLight aPos) const {
 
     QGraphicsItem *item = selectedItem();
@@ -140,14 +149,13 @@ void AzGraphicsSelectedItemArrow::mouseMoveEvent(QGraphicsSceneMouseEvent *event
     if (!isHasSelectedItem())
         return;
 
+    SideLight res = containsPoint(event);
     if(mSideLight == NotArrow){
-        SideLight res = containsPoint(event);
         if (res != NotArrow) {
             mSideLight = res;
             hoverEnterEvent();
         }
-    }else{
-        SideLight res = containsPoint(event);
+    } else {
         if(res == NotArrow){
            mSideLight = res;
            hoverLeaveEvent();
@@ -172,4 +180,5 @@ void AzGraphicsSelectedItemArrow::hoverEnterEvent(){
 
 void AzGraphicsSelectedItemArrow::hoverLeaveEvent(){
     qDebug() <<"Leave" << mSideLight;
+
 }
