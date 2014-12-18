@@ -139,27 +139,37 @@ QGraphicsItem* AzGraphicsSelectedItemArrow::selectedItem()const {
 void AzGraphicsSelectedItemArrow::mouseMoveEvent(QGraphicsSceneMouseEvent *event){
     if (!isHasSelectedItem())
         return;
-    if (inMousePos(event))
-        hoverEnterEvent();
-        //qDebug() << "Ura";
 
+    if(mSideLight == NotArrow){
+        SideLight res = containsPoint(event);
+        if (res != NotArrow) {
+            mSideLight = res;
+            hoverEnterEvent();
+        }
+    }else{
+        SideLight res = containsPoint(event);
+        if(res == NotArrow){
+           mSideLight = res;
+           hoverLeaveEvent();
+        }
+    }
 }
 
-bool AzGraphicsSelectedItemArrow::inMousePos(QGraphicsSceneMouseEvent *event) {
+AzGraphicsSelectedItemArrow::SideLight AzGraphicsSelectedItemArrow::containsPoint(QGraphicsSceneMouseEvent *event) {
     QPolygon polygone;
     for (int i = 0; i<8; ++i) {
         polygone = arrowPolygon( (SideLight)i);
         QPoint mousePos(event->scenePos().x(),event->scenePos().y());
-        if (polygone.containsPoint(mousePos,Qt::OddEvenFill))//Возвращает истину, если данная точка находится внутри многоугольника в соответствии с указанным FillRule; в противном случае возвращает ложь.
-            return true;
+        if (polygone.containsPoint(mousePos,Qt::OddEvenFill)) //Возвращает истину, если данная точка находится внутри многоугольника в соответствии с указанным FillRule; в противном случае возвращает ложь.
+            return  (SideLight)i;
     }
-    return false;
+    return NotArrow;
 }
 
 void AzGraphicsSelectedItemArrow::hoverEnterEvent(){
-    qDebug() <<"Enter";
+    qDebug() <<"Enter" << mSideLight;
 }
 
 void AzGraphicsSelectedItemArrow::hoverLeaveEvent(){
-
+    qDebug() <<"Leave" << mSideLight;
 }
