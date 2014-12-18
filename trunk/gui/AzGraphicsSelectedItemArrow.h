@@ -24,7 +24,7 @@ public:
    QPolygon arrowPolygon(SideLight);
    QPoint arrowPos(SideLight) const;
    void mouseMoveEvent(QGraphicsSceneMouseEvent* mauseEvent);
-   bool inMousePos(QGraphicsSceneMouseEvent* mauseEvent);
+   SideLight containsPoint(QGraphicsSceneMouseEvent* mauseEvent);
    void hoverEnterEvent();
    void hoverLeaveEvent();
 private:
