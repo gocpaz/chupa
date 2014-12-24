@@ -21,8 +21,8 @@ public:
    AzGraphicsSelectedItemArrow(QGraphicsScene *);
    ~AzGraphicsSelectedItemArrow(){}
    void show(QPainter* painter);
-   QPolygon arrowPolygon(SideLight);
-   QPoint arrowPos(SideLight) const;
+   QPolygonF arrowPolygon(SideLight);
+   QPointF arrowPos(SideLight) const;
    void mouseMoveEvent(QGraphicsSceneMouseEvent* mauseEvent);
    SideLight containsPoint(QGraphicsSceneMouseEvent* mauseEvent);
    void hoverEnterEvent();
