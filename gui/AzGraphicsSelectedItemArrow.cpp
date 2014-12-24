@@ -8,27 +8,38 @@
 const Qt::GlobalColor normalColor =  Qt::yellow;
 const Qt::GlobalColor selectedColor = Qt::green;
 
-QPolygon drPoligon(){
-   QPolygon poligon;
-   poligon << QPoint(0,0)
-           << QPoint(7,6)
-           << QPoint(2.5,6)
-           << QPoint(2.5,15)
-           << QPoint(-2.5,15)
-           << QPoint(-2.5,6)
-           << QPoint(-7,6);
+QPolygonF drPoligon(){
+   QPolygonF poligon;
+   poligon << QPointF(0,0)
+           << QPointF(8,9)
+           << QPointF(3,9)
+           << QPointF(3,12)
+           << QPointF(8,12)
+           << QPointF(0,21)
+           << QPointF(-8,12)
+           << QPointF(-3,12)
+           << QPointF(-3,9)
+           << QPointF(-8,9);
    return poligon;
 }
 
-static const QPolygon polygon = drPoligon();
+static const QPolygonF polygon = drPoligon();
 
-
+/*!
+ * \brief AzGraphicsSelectedItemArrow::AzGraphicsSelectedItemArrow
+ * \param scene
+ */
 AzGraphicsSelectedItemArrow::AzGraphicsSelectedItemArrow(QGraphicsScene *scene){
     this->mScene = scene;
     this->mSideLight = NotArrow;
 }
 
-QPolygon AzGraphicsSelectedItemArrow::arrowPolygon(SideLight trPos){
+/*!
+ * \brief AzGraphicsSelectedItemArrow::arrowPolygon
+ * \param trPos
+ * \return
+ */
+QPolygonF AzGraphicsSelectedItemArrow::arrowPolygon(SideLight trPos){
 
     qreal degreesAngl;
 
@@ -58,35 +69,46 @@ QPolygon AzGraphicsSelectedItemArrow::arrowPolygon(SideLight trPos){
        degreesAngl = 0;
        break;
    default:
-      return QPolygon();
+      return QPolygonF();
    }
 
    qreal degCos = qCos(qDegreesToRadians(degreesAngl));
    qreal degSin = qSin(qDegreesToRadians(degreesAngl));
 
-   QPolygon res;
+   QPolygonF res;
    for (int i = 0; i < polygon.size();++i) {
-      qreal x = polygon.point(i).x()*degCos + polygon.point(i).y()*degSin;
-      qreal y = -polygon.point(i).x()*degSin + polygon.point(i).y()*degCos;
-      res << QPoint(x,y);
+      qreal x = polygon[i].x() *degCos + polygon[i].y()*degSin;
+      qreal y = -polygon[i].x()*degSin + polygon[i].y()*degCos;
+      res << QPointF(x,y);
    }
-   QPoint point = arrowPos(trPos); // Возвращает координаты
+   QPointF point = arrowPos(trPos); // Возвращает координаты
    res.translate(point); // Растанавливает полигони согласно координат
    return res;
 }
-
+/*!
+ * \brief AzGraphicsSelectedItemArrow::show
+ * \param painter
+ */
 void AzGraphicsSelectedItemArrow::show(QPainter *painter){
 
     if (!isHasSelectedItem())
         return;
 
-    QPolygon polygone;
+    QPolygonF polygone;
 
     painter->save();
-    painter->setBrush(normalColor);
+   // painter->setBrush(Qt::black);
+    QPen pen;
+    pen.setWidth(0);
+    painter->setPen(pen);
     for (int i = 0; i < 8; ++i) {
         polygone = arrowPolygon((SideLight)i); // Возвращает положение стрелки
-        painter->drawPolygon(polygone); // Рисует полигоны
+        if (mSideLight == i) {
+            painter->setBrush(selectedColor);
+        } else {
+            painter->setBrush(normalColor);
+        }
+        painter->drawPolygon(polygone);// Рисует полигоны
     }
     painter->restore();
 
@@ -98,46 +120,49 @@ void AzGraphicsSelectedItemArrow::show(QPainter *painter){
  * \return полигон
  * Возращает полигон в виде стрелки
  */
-QPoint AzGraphicsSelectedItemArrow::arrowPos(SideLight aPos) const {
+QPointF AzGraphicsSelectedItemArrow::arrowPos(SideLight aPos) const {
 
     QGraphicsItem *item = selectedItem();
     if (item == 0)
-        return QPoint();
+        return QPointF();
 
     QPointF posi = item->pos();
     QRectF bound = item->boundingRect();
-    QPoint coordinateArrow;
+    QPointF coordinateArrow;
     switch (aPos) {
     case Npos:
-        coordinateArrow =  QPoint(posi.x()+bound.center().x(),posi.y());
+        coordinateArrow =  QPointF(posi.x()+bound.center().x(),posi.y());
         break;
     case Spos:
-        coordinateArrow =  QPoint(posi.x()+bound.center().x(),posi.y()+bound.height());
+        coordinateArrow =  QPointF(posi.x()+bound.center().x(),posi.y()+bound.height());
         break;
     case Epos:
-        coordinateArrow =  QPoint(posi.x()+bound.width(),posi.y()+bound.center().y());
+        coordinateArrow =  QPointF(posi.x()+bound.width(),posi.y()+bound.center().y());
         break;
     case Wpos:
-        coordinateArrow =  QPoint(posi.x(),posi.y()+bound.center().y());
+        coordinateArrow =  QPointF(posi.x(),posi.y()+bound.center().y());
         break;
     case NEpos:
-        coordinateArrow =  QPoint(posi.x()+bound.width(),posi.y());
+        coordinateArrow =  QPointF(posi.x()+bound.width(),posi.y());
         break;
     case NWpos:
-        coordinateArrow =  QPoint(posi.x(),posi.y());
+        coordinateArrow =  QPointF(posi.x(),posi.y());
         break;
     case SEpos:
-        coordinateArrow =  QPoint(posi.x()+bound.width(),posi.y()+bound.height());
+        coordinateArrow =  QPointF(posi.x()+bound.width(),posi.y()+bound.height());
         break;
     case SWpos:
-        coordinateArrow =  QPoint(posi.x(),posi.y()+bound.height());
+        coordinateArrow =  QPointF(posi.x(),posi.y()+bound.height());
         break;
     case NotArrow:
       break;
     };
     return coordinateArrow;
 }
-
+/*!
+ * \brief AzGraphicsSelectedItemArrow::selectedItem
+ * \return
+ */
 QGraphicsItem* AzGraphicsSelectedItemArrow::selectedItem()const {
 //    if(isHasSelectedItem()) {
 //        return  mScene->selectedItems()[0];
@@ -145,6 +170,10 @@ QGraphicsItem* AzGraphicsSelectedItemArrow::selectedItem()const {
 //    return 0;
     return isHasSelectedItem() ?  mScene->selectedItems()[0] : 0;
 }
+/*!
+ * \brief AzGraphicsSelectedItemArrow::mouseMoveEvent
+ * \param event
+ */
 void AzGraphicsSelectedItemArrow::mouseMoveEvent(QGraphicsSceneMouseEvent *event){
     if (!isHasSelectedItem())
         return;
@@ -163,22 +192,35 @@ void AzGraphicsSelectedItemArrow::mouseMoveEvent(QGraphicsSceneMouseEvent *event
     }
 }
 
+/*!
+ * \brief AzGraphicsSelectedItemArrow::containsPoint
+ * \param event
+ * \return
+ */
 AzGraphicsSelectedItemArrow::SideLight AzGraphicsSelectedItemArrow::containsPoint(QGraphicsSceneMouseEvent *event) {
-    QPolygon polygone;
+    QPolygonF polygone;
     for (int i = 0; i<8; ++i) {
         polygone = arrowPolygon( (SideLight)i);
-        QPoint mousePos(event->scenePos().x(),event->scenePos().y());
-        if (polygone.containsPoint(mousePos,Qt::OddEvenFill)) //Возвращает истину, если данная точка находится внутри многоугольника в соответствии с указанным FillRule; в противном случае возвращает ложь.
+        QPointF mousePos(event->scenePos().x(),event->scenePos().y());
+        if (polygone.containsPoint(mousePos,Qt::OddEvenFill)) //Возвращает истину, если данная точка находится внутри многоугольника в противном случае возвращает ложь.
             return  (SideLight)i;
     }
     return NotArrow;
 }
 
+/*!
+ * \brief AzGraphicsSelectedItemArrow::hoverEnterEvent
+ */
 void AzGraphicsSelectedItemArrow::hoverEnterEvent(){
     qDebug() <<"Enter" << mSideLight;
+    //QRectF pos = boundingRectF();
+    mScene->update();
 }
 
+/*!
+ * \brief AzGraphicsSelectedItemArrow::hoverLeaveEvent
+ */
 void AzGraphicsSelectedItemArrow::hoverLeaveEvent(){
     qDebug() <<"Leave" << mSideLight;
-
+    mScene->update();
 }
