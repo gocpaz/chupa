@@ -12,13 +12,13 @@ QPolygonF drPoligon(){
    QPolygonF poligon;
    poligon << QPointF(0,0)
            << QPointF(8,9)
-           << QPointF(3,9)
-           << QPointF(3,12)
+           << QPointF(2,9)
+           << QPointF(2,12)
            << QPointF(8,12)
-           << QPointF(0,21)
+           << QPointF(0,20)
            << QPointF(-8,12)
-           << QPointF(-3,12)
-           << QPointF(-3,9)
+           << QPointF(-2,12)
+           << QPointF(-2,9)
            << QPointF(-8,9);
    return poligon;
 }
@@ -29,9 +29,10 @@ static const QPolygonF polygon = drPoligon();
  * \brief AzGraphicsSelectedItemArrow::AzGraphicsSelectedItemArrow
  * \param scene
  */
-AzGraphicsSelectedItemArrow::AzGraphicsSelectedItemArrow(QGraphicsScene *scene){
+AzGraphicsSelectedItemArrow::AzGraphicsSelectedItemArrow(QGraphicsScene *scene): QObject(0) {
     this->mScene = scene;
     this->mSideLight = NotArrow;
+    connect(scene,SIGNAL(selectionChanged()),this,SLOT(itemSelectionChanged()));
 }
 
 /*!
@@ -85,8 +86,9 @@ QPolygonF AzGraphicsSelectedItemArrow::arrowPolygon(SideLight trPos){
    res.translate(point); // Растанавливает полигони согласно координат
    return res;
 }
+
 /*!
- * \brief AzGraphicsSelectedItemArrow::show
+ * \brief AzGraphicsSelectedItemArrow::show Показывает стрелочки
  * \param painter
  */
 void AzGraphicsSelectedItemArrow::show(QPainter *painter){
@@ -108,7 +110,8 @@ void AzGraphicsSelectedItemArrow::show(QPainter *painter){
         } else {
             painter->setBrush(normalColor);
         }
-        painter->drawPolygon(polygone);// Рисует полигоны
+        painter->drawPolygon(polygone); // Рисует полигоны
+
     }
     painter->restore();
 
@@ -131,45 +134,43 @@ QPointF AzGraphicsSelectedItemArrow::arrowPos(SideLight aPos) const {
     QPointF coordinateArrow;
     switch (aPos) {
     case Npos:
-        coordinateArrow =  QPointF(posi.x()+bound.center().x(),posi.y());
+        coordinateArrow = QPointF(posi.x()+bound.center().x(),posi.y());
         break;
     case Spos:
-        coordinateArrow =  QPointF(posi.x()+bound.center().x(),posi.y()+bound.height());
+        coordinateArrow = QPointF(posi.x()+bound.center().x(),posi.y()+bound.height());
         break;
     case Epos:
-        coordinateArrow =  QPointF(posi.x()+bound.width(),posi.y()+bound.center().y());
+        coordinateArrow = QPointF(posi.x()+bound.width(),posi.y()+bound.center().y());
         break;
     case Wpos:
-        coordinateArrow =  QPointF(posi.x(),posi.y()+bound.center().y());
+        coordinateArrow = QPointF(posi.x(),posi.y()+bound.center().y());
         break;
     case NEpos:
-        coordinateArrow =  QPointF(posi.x()+bound.width(),posi.y());
+        coordinateArrow = QPointF(posi.x()+bound.width(),posi.y());
         break;
     case NWpos:
-        coordinateArrow =  QPointF(posi.x(),posi.y());
+        coordinateArrow = QPointF(posi.x(),posi.y());
         break;
     case SEpos:
-        coordinateArrow =  QPointF(posi.x()+bound.width(),posi.y()+bound.height());
+        coordinateArrow = QPointF(posi.x()+bound.width(),posi.y()+bound.height());
         break;
     case SWpos:
-        coordinateArrow =  QPointF(posi.x(),posi.y()+bound.height());
+        coordinateArrow = QPointF(posi.x(),posi.y()+bound.height());
         break;
     case NotArrow:
       break;
     };
     return coordinateArrow;
 }
+
 /*!
  * \brief AzGraphicsSelectedItemArrow::selectedItem
  * \return
  */
 QGraphicsItem* AzGraphicsSelectedItemArrow::selectedItem()const {
-//    if(isHasSelectedItem()) {
-//        return  mScene->selectedItems()[0];
-//    }
-//    return 0;
     return isHasSelectedItem() ?  mScene->selectedItems()[0] : 0;
 }
+
 /*!
  * \brief AzGraphicsSelectedItemArrow::mouseMoveEvent
  * \param event
@@ -217,10 +218,26 @@ void AzGraphicsSelectedItemArrow::hoverEnterEvent(){
     mScene->update();
 }
 
+
 /*!
  * \brief AzGraphicsSelectedItemArrow::hoverLeaveEvent
  */
 void AzGraphicsSelectedItemArrow::hoverLeaveEvent(){
     qDebug() <<"Leave" << mSideLight;
     mScene->update();
+}
+
+
+/*!
+ * \brief AzGraphicsSelectedItemArrow::itemSelectionChanged
+ */
+void AzGraphicsSelectedItemArrow::itemSelectionChanged() {
+    mScene->update();
+}
+
+QRectF AzGraphicsSelectedItemArrow::boundingRect(SideLight pPos) const{
+    QRectF pos;
+   //pos.setTopLeft(arrowPolygon(NWpos).boundingRect().topLeft());
+  // pos.setBottomRight(arrowPolygon(SEpos).boundingRect().topLeft());
+    return pos;
 }
