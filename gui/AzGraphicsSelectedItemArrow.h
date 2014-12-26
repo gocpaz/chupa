@@ -4,8 +4,9 @@
 #include <QGraphicsItem>
 #include <QGraphicsScene>
 
-class AzGraphicsSelectedItemArrow
+class AzGraphicsSelectedItemArrow: public QObject
 {
+Q_OBJECT
 public:
     enum SideLight{
         Npos = 0,
@@ -21,18 +22,21 @@ public:
    AzGraphicsSelectedItemArrow(QGraphicsScene *);
    ~AzGraphicsSelectedItemArrow(){}
    void show(QPainter* painter);
-   QPolygonF arrowPolygon(SideLight);
-   QPointF arrowPos(SideLight) const;
    void mouseMoveEvent(QGraphicsSceneMouseEvent* mauseEvent);
-   SideLight containsPoint(QGraphicsSceneMouseEvent* mauseEvent);
-   void hoverEnterEvent();
-   void hoverLeaveEvent();
+private slots:
+    void itemSelectionChanged();
 private:
+    SideLight mSideLight;
+    QGraphicsScene *mScene;
     AzGraphicsSelectedItemArrow(const AzGraphicsSelectedItemArrow&);
     AzGraphicsSelectedItemArrow& operator = (const AzGraphicsSelectedItemArrow&){}
-    QGraphicsScene *mScene;
+    QPolygonF arrowPolygon(SideLight);
+    QPointF arrowPos(SideLight) const;
+    SideLight containsPoint(QGraphicsSceneMouseEvent* mauseEvent);
+    void hoverEnterEvent();
+    void hoverLeaveEvent();
     inline bool isHasSelectedItem()const { return mScene->selectedItems().size() > 0;}
     QGraphicsItem* selectedItem() const;
-    SideLight mSideLight;
+    QRectF boundingRect(SideLight)const;
 };
 #endif // AZGRAPHICSSELECTEDITEMARROW_H
