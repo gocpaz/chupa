@@ -4,39 +4,48 @@
 #include <QGraphicsItem>
 #include <QGraphicsScene>
 
+class AzGraphicsView;
+
 class AzGraphicsSelectedItemArrow: public QObject
 {
-Q_OBJECT
 public:
-    enum SideLight{
-        Npos = 0,
-        Spos = 1,
-        Epos = 2,
-        Wpos = 3,
-        NEpos = 4,
-        NWpos = 5,
-        SEpos = 6,
-        SWpos = 7,
+
+    enum CardinalDirection{
+        Npos     = 0,
+        NEpos    = 1,
+        Epos     = 2,
+        SEpos    = 3,
+        Spos     = 4,
+        SWpos    = 5,
+        Wpos     = 6,
+        NWpos    = 7,
         NotArrow = 8
     };
-   AzGraphicsSelectedItemArrow(QGraphicsScene *);
+   AzGraphicsSelectedItemArrow(AzGraphicsView *);
    ~AzGraphicsSelectedItemArrow(){}
-   void show(QPainter* painter);
-   void mouseMoveEvent(QGraphicsSceneMouseEvent* mauseEvent);
-private slots:
-    void itemSelectionChanged();
+
+   void show(QPainter* painter,const QRectF);
+   void mouseMoveEvent(QGraphicsSceneMouseEvent*);
+    void selectionChanged();
 private:
-    SideLight mSideLight;
-    QGraphicsScene *mScene;
     AzGraphicsSelectedItemArrow(const AzGraphicsSelectedItemArrow&);
     AzGraphicsSelectedItemArrow& operator = (const AzGraphicsSelectedItemArrow&){}
-    QPolygonF arrowPolygon(SideLight);
-    QPointF arrowPos(SideLight) const;
-    SideLight containsPoint(QGraphicsSceneMouseEvent* mauseEvent);
+
+    CardinalDirection containsPoint(QGraphicsSceneMouseEvent* mouseEvent);
+    void calcArrows();
+
     void hoverEnterEvent();
     void hoverLeaveEvent();
-    inline bool isHasSelectedItem()const { return mScene->selectedItems().size() > 0;}
+
+    bool isHasSelectedItem()const;
+
     QGraphicsItem* selectedItem() const;
-    QRectF boundingRect(SideLight)const;
+    QRect boundingRect() const;
+    QRectF sceneBoundingRect() const;
+
+    CardinalDirection mSideLight;
+    AzGraphicsView *mView;
+    QVector <QPolygon> mArrows;
+    bool mIsShowing;
 };
 #endif // AZGRAPHICSSELECTEDITEMARROW_H

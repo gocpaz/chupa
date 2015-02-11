@@ -19,6 +19,7 @@ public slots:
     void zoomView(int);
 private slots:
     void tabClosed(int);
+    void leftBtnClicked();
 private:
     QGraphicsView *currentView() const;
     Ui::MainWindow *ui;

@@ -8,10 +8,12 @@
 #include "ElementScene.h"
 #include "AzGraphicsSvgItem.h"
 #include "AzGraphicsPoligonItem.h"
+#include "AzGraphicsView.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
     connect(ui->tabWidget,SIGNAL(tabCloseRequested(int)),this,SLOT(tabClosed(int)));
+    connect(ui->pbLeft,SIGNAL(clicked()),this,SLOT(leftBtnClicked()));
     addElementEditTab();
 }
 
@@ -19,27 +21,31 @@ void MainWindow::addElementEditTab() {
    QGraphicsScene *scene = new ElementScene(this);
 
    scene->setSceneRect(-10,-10,5000,5000);
-   QGraphicsView *view = new QGraphicsView(scene,this);
+   AzGraphicsView *view = new AzGraphicsView(scene,this);
    //view->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
 
    AzGraphicsPoligonItem *arr = new AzGraphicsPoligonItem;
    arr->setPos(200,250);
-   //arr->setFlag(QGraphicsItem::ItemIs);
+   arr->setFlag(QGraphicsItem::ItemIgnoresTransformations,true);
    scene->addItem(arr);
 
 
    QGraphicsSvgItem *svg = new AzGraphicsSvgItem("comp.svg");
    QGraphicsSvgItem *svg2 = new AzGraphicsSvgItem("comp.svg");
-   svg2->setPos(100,100);
 
 
+   svg->setFlag(QGraphicsItem::ItemSendsGeometryChanges,true);
    svg->setFlag(QGraphicsItem::ItemIsSelectable,true);
    svg->setFlag(QGraphicsItem::ItemIsMovable,true);
    svg->setFlag(QGraphicsItem::ItemIgnoresTransformations,false);
 
+
+   svg2->setFlag(QGraphicsItem::ItemSendsGeometryChanges,false);
    svg2->setFlag(QGraphicsItem::ItemIsSelectable,true);
    svg2->setFlag(QGraphicsItem::ItemIsMovable,true);
    svg2->setFlag(QGraphicsItem::ItemIgnoresTransformations,false);
+
+    svg2->setPos(100,100);
 
    QGraphicsItemGroup *gr = new QGraphicsItemGroup;
    gr->addToGroup(svg);
@@ -101,5 +107,15 @@ void MainWindow::zoomView(int) {
         matrix.scale(scale,scale);
         currentView()->setMatrix(matrix);
     }
+}
 
+void MainWindow::leftBtnClicked() {
+    if (!currentView())
+        return;
+    if (!currentView()->scene())
+        return;
+    if (currentView()->scene()->selectedItems().size() == 0)
+        return;
+    QGraphicsItem *item = currentView()->scene()->selectedItems()[0];
+    item->setPos(101,101);
 }

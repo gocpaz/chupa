@@ -19,7 +19,6 @@ private:
     void enterMoving();
     void endMoving();
     bool mIsMovingItems;
-    AzGraphicsSelectedItemArrow mSelectedArrow;
 };
 
 #endif // ELEMENTSCENE_H

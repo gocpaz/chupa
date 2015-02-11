@@ -11,7 +11,7 @@
  * \param parent
  */
 ElementScene::ElementScene(QObject *parent) :
-    QGraphicsScene(parent),mIsMovingItems(false),mSelectedArrow(this) {
+    QGraphicsScene(parent),mIsMovingItems(false) {
 }
 
 void ElementScene::mouseMoveEvent(QGraphicsSceneMouseEvent * event) {
@@ -25,7 +25,6 @@ void ElementScene::mouseMoveEvent(QGraphicsSceneMouseEvent * event) {
             }
         }
     }
-    mSelectedArrow.mouseMoveEvent(event);
     QGraphicsScene::mouseMoveEvent(event);
 }
 
@@ -48,11 +47,9 @@ void ElementScene::enterMoving() {
 void ElementScene::endMoving() {
 }
 
-void ElementScene::drawForeground(QPainter *painter, const QRectF &rect){
-
+void ElementScene::drawForeground(QPainter *painter, const QRectF &rect) {
     QGraphicsScene::drawForeground(painter, rect);
+}
 
-      mSelectedArrow.show(painter);
-    }
 
 
