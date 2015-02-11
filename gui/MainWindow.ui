@@ -57,6 +57,19 @@
         <attribute name="label">
          <string>Page 1</string>
         </attribute>
+        <widget class="QPushButton" name="pbLeft">
+         <property name="geometry">
+          <rect>
+           <x>30</x>
+           <y>90</y>
+           <width>75</width>
+           <height>23</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>&gt;&gt;</string>
+         </property>
+        </widget>
        </widget>
       </widget>
       <widget class="QWidget" name="layoutWidget">
@@ -119,8 +132,6 @@
    </attribute>
   </widget>
  </widget>
- <resources>
-  <include location="res.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

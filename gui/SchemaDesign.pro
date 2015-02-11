@@ -3,13 +3,14 @@ QT       += widgets svg
 
 TEMPLATE = app
 
-#DESTDIR = ../bin
+DESTDIR = ../bin
 
 HEADERS += MainWindow.h \
     AzGraphicsSvgItem.h \
     ElementScene.h \
     AzGraphicsSelectedItemArrow.h \
-    AzGraphicsPoligonItem.h
+    AzGraphicsPoligonItem.h \
+    AzGraphicsView.h
 
 CONFIG+=debug_and_release
 
@@ -19,7 +20,8 @@ SOURCES += main.cpp \
     ElementScene.cpp \
     AzGraphicsSvgItem.cpp \
     AzGraphicsSelectedItemArrow.cpp \
-    AzGraphicsPoligonItem.cpp
+    AzGraphicsPoligonItem.cpp \
+    AzGraphicsView.cpp
 
 
 FORMS    += MainWindow.ui
