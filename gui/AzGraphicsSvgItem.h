@@ -9,6 +9,7 @@ class AzGraphicsSvgItem : public QGraphicsSvgItem
 public:
     AzGraphicsSvgItem(const QString&);
 protected:
+    virtual QVariant itemChange(GraphicsItemChange, const QVariant &);
 private:
 };
 

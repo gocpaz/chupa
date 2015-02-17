@@ -8,6 +8,8 @@ namespace Ui {
     class MainWindow;
 }
 
+//#define DEBUG_USE_NATIVE
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -23,6 +25,7 @@ private slots:
 private:
     QGraphicsView *currentView() const;
     Ui::MainWindow *ui;
+    QGraphicsView *mView;
 };
 
 #endif // MAINWINDOW_H

@@ -3,7 +3,7 @@
 #include <QGraphicsScene>
 #include <QGraphicsItem>
 #include <QtMath>
-#include <QGraphicsSceneMouseEvent>
+#include <QMouseEvent>
 
 #include "AzGraphicsView.h"
 
@@ -30,8 +30,12 @@ ArrowsPolygon::ArrowsPolygon():mPolygons(ARROWS_COUNT)  {
 
 QPolygon ArrowsPolygon::originalPolygon() {
     QPolygon res;
-    res << QPoint(0,0)      << QPoint(8,9)      << QPoint(2,9)     << QPoint(2,12)  << QPoint(8,12)
-        << QPoint(0,20)     << QPoint(-8,12)    << QPoint(-2,12)   << QPoint(-2,9)  << QPoint(-8,9);
+    res << QPoint(0,0)
+        << QPoint(8,9)      << QPoint(2,9)     << QPoint(2,12)  << QPoint(8,12)
+        << QPoint(0,20);
+    for (int i = 4; i > 0; --i) { //mirror half arrow
+       res << QPoint(res[i].x() * -1,res[i].y());
+    }
     return res;
 }
 
@@ -65,57 +69,59 @@ void ArrowsPolygon::calcPolygons() {
  * \brief AzGraphicsSelectedItemArrow::AzGraphicsSelectedItemArrow
  * \param view
  */
-AzGraphicsSelectedItemArrow::AzGraphicsSelectedItemArrow(AzGraphicsView *view): QObject(0),mArrows(ARROWS_COUNT),mIsShowing(false) {
+AzGraphicsSelectedItemArrow::AzGraphicsSelectedItemArrow(AzGraphicsView *view):
+    mArrows(ARROWS_COUNT),mIsShowing(false),mMouseButton(Qt::NoButton) {
     this->mView = view;
     this->mSideLight = NotArrow;
+    this->mActiveTransformArrow = NotArrow;
+#ifdef VIEW_PAINT_RECT_DEBUG
+    mPaintCount = 0;
+#endif
    // connect(scene,SIGNAL(selectionChanged()),this,SLOT(itemSelectionChanged()));
 }
 
+/*!
+ * \brief AzGraphicsSelectedItemArrow::itemRect
+ * \param item
+ * \return Возвращает координаты и размеры итема в системе координат view
+ */
 
-void AzGraphicsSelectedItemArrow::calcArrows() {
+QRect AzGraphicsSelectedItemArrow::itemRect(QGraphicsItem *item) const {
+    return mView->mapFromScene(item->sceneBoundingRect()).boundingRect();
+}
 
-    QGraphicsItem *item = selectedItem();
-    if (item == 0)
-        return;
-
-    QPoint pos = mView->mapFromScene(item->pos());
-    QRect bound = mView->mapFromScene(item->boundingRect()).boundingRect();
-    QPoint coordArrow;
-    int leftX = pos.x();
-    int rightX = leftX + bound.width();
-    int midX = leftX + (rightX - leftX) / 2;
-
-    int topY = pos.y();
-    int bottomY = topY + bound.height();
-    int midY = topY + (bottomY - topY) / 2;
-
-
+/*!
+ * \brief AzGraphicsSelectedItemArrow::calcArrows
+ * \param rect
+ * Вычисляет положени стрелок в координатах view
+ */
+void AzGraphicsSelectedItemArrow::calcArrows(const QRect& rect) {
+   QPoint coordArrow;
    for (int i = 0; i < ARROWS_COUNT; ++i) {
-
        switch (i) {
-       case Npos:
-           coordArrow = QPoint(midX,topY);
+       case NPos:
+           coordArrow = QPoint(rect.center().x(),rect.top());
            break;
-       case Spos:
-           coordArrow = QPoint(midX,bottomY);
+       case SPos:
+           coordArrow = QPoint(rect.center().x(),rect.bottom());
            break;
-       case Epos:
-           coordArrow = QPoint(rightX,midY);
+       case EPos:
+           coordArrow = QPoint(rect.right(),rect.center().y());
            break;
-       case Wpos:
-           coordArrow = QPoint(leftX,midY);
+       case WPos:
+           coordArrow = QPoint(rect.left(),rect.center().y());
            break;
-       case NEpos:
-           coordArrow = QPoint(rightX,topY);
+       case NEPos:
+           coordArrow = QPoint(rect.right(),rect.top());
            break;
-       case NWpos:
-           coordArrow = QPoint(leftX,topY);
+       case NWPos:
+           coordArrow = QPoint(rect.left(),rect.top());
            break;
-       case SEpos:
-           coordArrow = QPoint(rightX,bottomY);
+       case SEPos:
+           coordArrow = QPoint(rect.right(),rect.bottom());
            break;
-       case SWpos:
-           coordArrow = QPoint(leftX,bottomY);
+       case SWPos:
+           coordArrow = QPoint(rect.left(),rect.bottom());
            break;
        case NotArrow:
          break;
@@ -126,43 +132,65 @@ void AzGraphicsSelectedItemArrow::calcArrows() {
 
      mArrows[i] = res;
    }
+
+   //calc bounding rect arrow
+   QPoint point = QPoint(mArrows[WPos].boundingRect().left(),mArrows[NPos].boundingRect().top());
+   mBoundingRect.setTopLeft(point);
+   point = QPoint(mArrows[EPos].boundingRect().right(),mArrows[SPos].boundingRect().bottom());
+   mBoundingRect.setBottomRight(point);
+
 }
+
+void AzGraphicsSelectedItemArrow::calcArrows() {
+    QGraphicsItem *item = selectedItem();
+    if (item == 0)
+        return;
+    QRect rect = itemRect(item);
+    calcArrows(rect);
+}
+
+
 
 /*!
  * \brief AzGraphicsSelectedItemArrow::show Показывает стрелочки
  * \param painter
  */
 void AzGraphicsSelectedItemArrow::show(QPainter *painter,const QRectF rect){
-    qDebug() << rect;
     if (!isHasSelectedItem()) {
         return;
     }
 
+    if (mOldRectSelectedItem != itemRect(selectedItem())) { //pos or size change?
+        QRect oldBoundingArrowRect = mBoundingRect;
+        calcArrows();
+        QRect unitedRect = oldBoundingArrowRect.united(mBoundingRect);
+        mOldRectSelectedItem = itemRect(selectedItem());
+        QRectF sceneRect = mView->mapToScene(unitedRect).boundingRect();
+        mView->scene()->invalidate(rect.united(sceneRect),QGraphicsScene::ForegroundLayer);
+        return;
+    }
 
-//    qDebug() << selectedItem()->boundingRect();
+	calcArrows();
 
-    calcArrows();
-//    if (!rect.intersects(boundingRect()))
-//        return;
 
+    QVector<int> arrowsList;
+    if (mActiveTransformArrow == NotArrow) {
+       arrowsList = containsArrows(mView->mapFromScene(rect).boundingRect());
+    } else {
+        arrowsList.append(mActiveTransformArrow);
+    }
+    if (arrowsList.size() == 0)
+        return;
     painter->save();
-
     painter->setWorldMatrixEnabled(false);
 
-
-    //test.setMatrix(1,0,0,0,1,0,trans.m31(),trans.m32(),1);
-
-    QPen pen;
-    pen.setWidth(0);
-    painter->setPen(pen);
-
-    for (int i = 0; i < ARROWS_COUNT; ++i) {
-        if (mSideLight == i) {
+    for (int i = 0; i < arrowsList.size(); ++i) {
+        if ((arrowsList[i] == mSideLight) || (arrowsList[i] == mActiveTransformArrow) ) {
             painter->setBrush(selectedColor);
         } else {
             painter->setBrush(normalColor);
         }
-        painter->drawPolygon(mArrows[i]); // Рисует полигоны
+        painter->drawPolygon(mArrows[arrowsList[i]]);
     }
     painter->restore();
 }
@@ -180,15 +208,67 @@ QGraphicsItem* AzGraphicsSelectedItemArrow::selectedItem()const {
     return isHasSelectedItem() ?  mView->scene()->selectedItems()[0] : 0;
 }
 
+
+
+/*!
+ * \brief AzGraphicsSelectedItemArrow::containsPoint
+ * \param
+ * \return
+ */
+AzGraphicsSelectedItemArrow::Side AzGraphicsSelectedItemArrow::containsPoint(const QPoint& point) {
+    if (!mBoundingRect.contains(point))
+        return NotArrow;
+    for (int i = 0; i < ARROWS_COUNT; ++i) {
+        if (mArrows[i].boundingRect().contains(point))
+            return (Side)i;
+    }
+    return NotArrow;
+}
+
+/*!
+ * \brief AzGraphicsSelectedItemArrow::containsArrows
+ * \param rec область
+ * \return Возвращает массив "стрелок", которые попадают в \a rec
+ */
+QVector<int> AzGraphicsSelectedItemArrow::containsArrows(const QRect& rec) {
+    QVector<int> res;
+    for (int i = 0; i < ARROWS_COUNT; ++i) {
+        if (rec.intersects(mArrows[i].boundingRect()))
+            res.append(i);
+    }
+    return res;
+}
+
+void AzGraphicsSelectedItemArrow::mousePressEvent(QMouseEvent * event) {
+    mMouseButton = event->button(); //save button state for mouse move event
+    if (mSideLight != NotArrow) {
+       mActiveTransformArrow = mSideLight;  //set transform state arrow
+       mOldItemRect = itemRect();
+       mOffsetMousePos = event->pos().y() - itemRect().bottom(); //позиция относительно стрелки
+       //setCursor(mActiveTransformArrow);
+       event->setAccepted(false); //блокируем, чтобы не пропадал selected не изменялось
+    }
+}
+
+void AzGraphicsSelectedItemArrow::mouseReleaseEvent(QMouseEvent *) {
+    mMouseButton = Qt::NoButton;
+    if (mActiveTransformArrow != NotArrow) {
+        mView->scene()->invalidate(boundingRectToScene(),QGraphicsScene::ForegroundLayer);
+        mActiveTransformArrow = NotArrow;
+    }
+    //setCursor(NotArrow);
+}
+
+
 /*!
  * \brief AzGraphicsSelectedItemArrow::mouseMoveEvent
  * \param event
  */
-void AzGraphicsSelectedItemArrow::mouseMoveEvent(QGraphicsSceneMouseEvent *event){
+void AzGraphicsSelectedItemArrow::mouseMoveEvent(QMouseEvent *event){
     if (!isHasSelectedItem())
         return;
-
-    CardinalDirection res = containsPoint(event);
+    QPoint mousePos = event->pos();
+    Side res = containsPoint(mousePos);
     if(mSideLight == NotArrow){
         if (res != NotArrow) {
             mSideLight = res;
@@ -196,43 +276,43 @@ void AzGraphicsSelectedItemArrow::mouseMoveEvent(QGraphicsSceneMouseEvent *event
         }
     } else {
         if(res == NotArrow){
-           mSideLight = res;
            hoverLeaveEvent();
+           mSideLight = res;
+        }
+    }
+
+    if (mActiveTransformArrow != AzGraphicsSelectedItemArrow::NotArrow) {
+        if (mMouseButton == Qt::LeftButton) {
+            int height = selectedItem()->boundingRect().height(); //original height
+            int delta = event->y() - (mOldItemRect.y() + height) - mOffsetMousePos; //length from current pos to original pos
+            int scaleHeight = delta + height;
+            qreal scale = (qreal)(scaleHeight) / (qreal)(height);
+
+            QTransform trans ;
+            trans.scale(1,scale);
+            selectedItem()->setTransform(trans);
         }
     }
 }
 
 /*!
- * \brief AzGraphicsSelectedItemArrow::containsPoint
- * \param event
- * \return
- */
-AzGraphicsSelectedItemArrow::CardinalDirection AzGraphicsSelectedItemArrow::containsPoint(QGraphicsSceneMouseEvent *event) {
-    QPolygonF polygone;
-    for (int i = 0; i<ARROWS_COUNT; ++i) {
-        QPoint mousePos(event->scenePos().x(),event->scenePos().y());
-        if (mArrows[i].containsPoint(mousePos,Qt::OddEvenFill)) //Возвращает истину, если данная точка находится внутри многоугольника в противном случае возвращает ложь.
-            return (CardinalDirection)i;
-    }
-    return NotArrow;
-}
-
-/*!
- * \brief AzGraphicsSelectedItemArrow::hoverEnterEvent
+ * \brief Вызывается при заходе на стрелочку
+ * Пересовывает стрелку другим цветом на "активную"
+ *
  */
 void AzGraphicsSelectedItemArrow::hoverEnterEvent(){
-    qDebug() <<"Enter" << mSideLight;
-    //QRectF pos = boundingRectF();
-   // mScene->update();
+    QRectF rect = mView->mapToScene(mArrows[mSideLight].boundingRect()).boundingRect();
+    mView->scene()->invalidate(rect,QGraphicsScene::ForegroundLayer);
 }
 
 
 /*!
- * \brief AzGraphicsSelectedItemArrow::hoverLeaveEvent
+ * \brief Вызывается при выходе со стрелочки
+ *  \a mSideLight указывает на стрелочку, с которой выходим
  */
 void AzGraphicsSelectedItemArrow::hoverLeaveEvent(){
-    qDebug() <<"Leave" << mSideLight;
-    //mScene->update();
+    QRectF rect = mView->mapToScene(mArrows[mSideLight].boundingRect()).boundingRect();
+    mView->scene()->invalidate(rect,QGraphicsScene::ForegroundLayer);
 }
 
 
@@ -243,28 +323,71 @@ void AzGraphicsSelectedItemArrow::selectionChanged() {
     if (!mView->scene())
         return;
     if (mIsShowing) { //убираем старые стрелы
-       // mView->scene()->update(sceneBoundingRect());
-       mView->scene()->invalidate(sceneBoundingRect(),QGraphicsScene::ForegroundLayer);
+       mView->scene()->invalidate(boundingRectToScene(),QGraphicsScene::ForegroundLayer);
     }
     if (isHasSelectedItem()) {
+        mOldRectSelectedItem = itemRect(selectedItem());
         calcArrows();
-        //mView->scene()->update(sceneBoundingRect());
-        mView->scene()->invalidate(sceneBoundingRect(),QGraphicsScene::ForegroundLayer);
+        mView->scene()->invalidate(boundingRectToScene(),QGraphicsScene::ForegroundLayer);
         mIsShowing = true;
     } else {
         mIsShowing = false;
     }
 }
 
-QRect AzGraphicsSelectedItemArrow::boundingRect() const {
-   QRect res;
-   QPoint point = QPoint(mArrows[Wpos].boundingRect().left(),mArrows[Npos].boundingRect().top());
-   res.setTopLeft(point);
-   point = QPoint(mArrows[Epos].boundingRect().right(),mArrows[Spos].boundingRect().bottom());
-   res.setBottomRight(point);
-   return res;
+/*!
+ * \brief AzGraphicsSelectedItemArrow::itemMoved Перерисовывает стрелы при перемещении
+ *
+ */
+void AzGraphicsSelectedItemArrow::itemMoved(const QPoint&,const QPoint&) {
+//#ifdef VIEW_PAINT_RECT_DEBUG
+//    mDebugRects.clear();
+//#endif
+//   // truble in QT ??? При попытке перерисовки только стрелок вылазит глюк в виде остаточных линий
+//   QVector <QPolygon> oldArrows = mArrows; //old arrow pos
+//   QVector <QRect> united(ARROWS_COUNT); //rect old pos + new pos
+//   calcArrows();    //calc new pos
+//   for (int i = 0; i < ARROWS_COUNT; ++i) {
+//      QRect rect = oldArrows[i].boundingRect().united(mArrows[i].boundingRect());
+
+//#ifdef VIEW_PAINT_RECT_DEBUG
+//      mDebugRects.append(mView->mapToScene(rect).boundingRect());
+//#endif
+//      mView->scene()->invalidate(mView->mapToScene(rect).boundingRect(),QGraphicsScene::ForegroundLayer);
+//   }
 }
 
-QRectF AzGraphicsSelectedItemArrow::sceneBoundingRect() const {
-    return mView->mapToScene(boundingRect()).boundingRect();
+QRectF AzGraphicsSelectedItemArrow::boundingRectToScene() const {
+    return mView->mapToScene(mBoundingRect).boundingRect();
 }
+
+void AzGraphicsSelectedItemArrow::setCursor(Side arrow) {
+    switch (arrow) {
+        case NPos:
+        case SPos:
+            mView->setCursor(Qt::SizeVerCursor);
+            break;
+        case EPos:
+        case WPos:
+            mView->setCursor(Qt::SizeHorCursor);
+            break;
+        case NEPos:
+        case SWPos:
+            mView->setCursor(Qt::SizeBDiagCursor);
+            break;
+        case NWPos:
+        case SEPos:
+            mView->setCursor(Qt::SizeFDiagCursor);
+            break;
+        default:
+           mView->unsetCursor();
+   }
+}
+
+#ifdef VIEW_PAINT_RECT_DEBUG
+void AzGraphicsSelectedItemArrow::showPaintRectDebug(QPainter *painter) {
+    for (int i = 0; i < mDebugRects.size();++i) {
+        painter->drawRect(mDebugRects[i]);
+    }
+}
+#endif
