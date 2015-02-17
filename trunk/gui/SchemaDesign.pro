@@ -7,21 +7,23 @@ DESTDIR = ../bin
 
 HEADERS += MainWindow.h \
     AzGraphicsSvgItem.h \
-    ElementScene.h \
     AzGraphicsSelectedItemArrow.h \
     AzGraphicsPoligonItem.h \
-    AzGraphicsView.h
+    AzGraphicsView.h \
+    AzGraphicsScene.h \
+    AzGraphicsItem.h
 
 CONFIG+=debug_and_release
 
 
 SOURCES += main.cpp \
 	   MainWindow.cpp \
-    ElementScene.cpp \
     AzGraphicsSvgItem.cpp \
     AzGraphicsSelectedItemArrow.cpp \
     AzGraphicsPoligonItem.cpp \
-    AzGraphicsView.cpp
+    AzGraphicsView.cpp \
+    AzGraphicsScene.cpp \
+    AzGraphicsItem.cpp
 
 
 FORMS    += MainWindow.ui
