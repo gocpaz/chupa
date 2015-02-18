@@ -7,6 +7,7 @@
 #include <QMouseEvent>
 
 //#define VIEW_PAINT_RECT_DEBUG
+#define DEBUG_USER_TRANSFORM
 
 class AzGraphicsView;
 
