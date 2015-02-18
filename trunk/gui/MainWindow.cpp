@@ -45,7 +45,7 @@ QWidget *w = new QWidget(this);
 
     AzGraphicsItem *azItem = new AzGraphicsItem;
     azItem->setPos(0,0);
-    scene->addItem(azItem);
+    //scene->addItem(azItem);
 
     QGraphicsRectItem *rectItem = new QGraphicsRectItem;
     rectItem->setRect(0,0,100,100);
@@ -72,7 +72,7 @@ QWidget *w = new QWidget(this);
    svg2->setFlag(QGraphicsItem::ItemIgnoresTransformations,false);
    //svg2->setFlag(QGraphicsItem::ItemSendsGeometryChanges,true);
 
-    svg2->setPos(100,100);
+    svg2->setPos(0,50);
 
    QGraphicsItemGroup *gr = new QGraphicsItemGroup;
    gr->addToGroup(svg);
@@ -150,10 +150,11 @@ void MainWindow::leftBtnClicked() {
     if (currentView()->scene()->selectedItems().size() == 0)
         return;
     QGraphicsItem *item = mView->scene()->selectedItems()[0];
-    qDebug() << item->boundingRect();
     QTransform trans;
-    trans.scale(1,3);
+    trans.scale(1,-1);
+    //qDebug() << item->sceneBoundingRect();
     item->setTransform(trans);
+    //qDebug() << item->sceneBoundingRect();
    // qDebug() << item->sceneBoundingRect();
 
 //    QGraphicsItem *item = currentView()->scene()->selectedItems()[0];
