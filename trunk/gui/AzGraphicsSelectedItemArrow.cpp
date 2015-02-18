@@ -243,9 +243,16 @@ void AzGraphicsSelectedItemArrow::mousePressEvent(QMouseEvent * event) {
     mMouseButton = event->button(); //save button state for mouse move event
     if (mSideLight != NotArrow) {
        mActiveTransformArrow = mSideLight;  //set transform state arrow
-       mOldItemRect = itemRect();
-       mOffsetMousePos = event->pos().y() - itemRect().bottom(); //позиция относительно стрелки
-       //setCursor(mActiveTransformArrow);
+       //*/mOldItemRect = itemRect();
+//       QPoint pos = mView->mapFromScene(selectedItem()->pos());
+//       mOldItemRect.setTopLeft(pos);
+//       qDebug() << pos;
+//       mOldItemRect.setSize(mView->mapFromScene(selectedItem()->boundingRect()).boundingRect().size());
+
+
+       //mOffsetMousePos = event->pos().y() - itemRect().bottom(); //позиция относительно стрелки
+       //qDebug() << mOldItemRect << selectedItem()->transform().map( selectedItem()->boundingRect());
+       //setCursor(mActiveTransformArrow);*/
        event->setAccepted(false); //блокируем, чтобы не пропадал selected не изменялось
     }
 }
@@ -284,12 +291,17 @@ void AzGraphicsSelectedItemArrow::mouseMoveEvent(QMouseEvent *event){
     if (mActiveTransformArrow != AzGraphicsSelectedItemArrow::NotArrow) {
         if (mMouseButton == Qt::LeftButton) {
             int height = selectedItem()->boundingRect().height(); //original height
-            int delta = event->y() - (mOldItemRect.y() + height) - mOffsetMousePos; //length from current pos to original pos
-            int scaleHeight = delta + height;
-            qreal scale = (qreal)(scaleHeight) / (qreal)(height);
+
+//            int delta = event->y() - (mOldItemRect.y() + height) - mOffsetMousePos; //length from current pos to original pos
+//            int scaleHeight = delta + height;
+//            qreal scale = (qreal)(scaleHeight) / (qreal)(height);
+
+            int scaleHeight = event->y() - selectedItem()->pos().y();
+            qreal scale = (qreal)(scaleHeight) / height;
+            qDebug() << height;
 
             QTransform trans ;
-            trans.scale(1,scale);
+            trans.scale(1,scale); //y - m22
             selectedItem()->setTransform(trans);
         }
     }
