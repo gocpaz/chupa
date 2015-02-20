@@ -15,6 +15,10 @@ public:
     ~AzGraphicsView();
     void setShowArrow(bool val)                 { mShowArrow = val;}
     bool showArrow() const              { return mShowArrow; }
+#ifdef DEBUG_EDITOR
+signals:
+    void mouseMove(QMouseEvent * event);
+#endif
 protected slots:
     void selectionChanged();
     void moveItemEvent(const QPointF&, const QPointF&);

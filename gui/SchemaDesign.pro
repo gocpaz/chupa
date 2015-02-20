@@ -11,7 +11,8 @@ HEADERS += MainWindow.h \
     AzGraphicsPoligonItem.h \
     AzGraphicsView.h \
     AzGraphicsScene.h \
-    AzGraphicsItem.h
+    AzGraphicsItem.h \
+    DebugSchemaDesign.h
 
 CONFIG+=debug_and_release
 
@@ -23,17 +24,20 @@ SOURCES += main.cpp \
     AzGraphicsPoligonItem.cpp \
     AzGraphicsView.cpp \
     AzGraphicsScene.cpp \
-    AzGraphicsItem.cpp
+    AzGraphicsItem.cpp \
+    DebugSchemaDesign.cpp
 
 
 FORMS    += MainWindow.ui
 
-#RESOURCES =  res.qrc
+
+
+RESOURCES =  res.qrc
 
 
 
 CONFIG(debug,debug|release){
-    DEFINES =  AZ_DEBUG
+    DEFINES =  DEBUG_EDITOR
     unix {
 	OBJECTS_DIR = build/.tmp/debug
 	MOC_DIR = build/.tmp/debug
@@ -41,6 +45,7 @@ CONFIG(debug,debug|release){
 	OBJECTS_DIR = build/.tmp/debug
 	MOC_DIR = build/.tmp/debug
     }
+    FORMS    += DebugSchemaDesign.ui
     TARGET = SchemaDesignd
 }
 else {

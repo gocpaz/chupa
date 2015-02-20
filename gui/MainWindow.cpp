@@ -1,9 +1,11 @@
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
 
+
 #include <QDebug>
 #include <QGraphicsSvgItem>
 #include <QtMath>
+#include <QPushButton>
 
 #include "AzGraphicsScene.h"
 #include "AzGraphicsSvgItem.h"
@@ -11,12 +13,54 @@
 #include "AzGraphicsView.h"
 #include "AzGraphicsItem.h"
 
+
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
+#ifdef DEBUG_EDITOR
+     mDebugWin = new DebugSchemaDesign(ui->centralwidget);
+     ui->verticalLayout->addWidget(mDebugWin);
+
+#endif
     connect(ui->tabWidget,SIGNAL(tabCloseRequested(int)),this,SLOT(tabClosed(int)));
-    connect(ui->pbLeft,SIGNAL(clicked()),this,SLOT(leftBtnClicked()));
+    //connect(ui->pbLeft,SIGNAL(clicked()),this,SLOT(leftBtnClicked()));
     addElementEditTab();
+#ifdef DEBUG_EDITOR
+    connect(mView,SIGNAL(mouseMove(QMouseEvent*)),this,SLOT(mouseMoveView(QMouseEvent*)));
+    connect(mView->scene(),SIGNAL(selectionChanged()),this,SLOT(selectionChanged()));
+
+    selectionChanged();
+
+#endif
+
 }
+
+#ifdef DEBUG_EDITOR
+void MainWindow::mouseMoveView(QMouseEvent * event) {
+    //QPointF pos = mView->mapToScene(event->pos());
+    QPoint pos = event->pos();
+    mDebugWin->ui->lbMouseCoord->setText(QString::number(pos.x())+'x'+QString::number(pos.y()));
+    showItemCoord();
+}
+
+void MainWindow::showItemCoord() {
+    QGraphicsItem *item = (mView->scene()->selectedItems().size() > 0) ? mView->scene()->selectedItems()[0] : 0;
+    if (item) {
+        //QRectF rect = item->sceneBoundingRect();
+        QRect rect = mView->mapFromScene(item->sceneBoundingRect()).boundingRect();
+        rect.setX(item->pos().x());
+        rect.setY(item->pos().y());
+        const QString coord(QString::number(rect.x()) +'x' + QString::number(rect.y()));
+        const QString rectStr(QString::number(rect.width()) +'x' + QString::number(rect.height()));
+        mDebugWin->ui->lbSelectedRect->setText(coord+':' + rectStr);
+    } else {
+        mDebugWin->ui->lbSelectedRect->setText("");
+    }
+}
+
+void MainWindow::selectionChanged() {
+    showItemCoord();
+}
+#endif
 
 void MainWindow::addElementEditTab() {
 
