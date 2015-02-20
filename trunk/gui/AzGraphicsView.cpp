@@ -69,6 +69,10 @@ void AzGraphicsView::mouseMoveEvent(QMouseEvent * event) {
     if (mShowArrow) {
         mArrows.mouseMoveEvent(event);
     }
+#ifdef DEBUG_EDITOR
+    emit mouseMove(event);
+#endif
     QGraphicsView::mouseMoveEvent(event);
+
 }
 

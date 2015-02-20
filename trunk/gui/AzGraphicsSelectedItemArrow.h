@@ -64,14 +64,16 @@ private:
     Side mSideLight;
     AzGraphicsView *mView;
     QVector <QPolygon> mArrows;
-
+    QRect mOldRectTransform;
+    QTransform mOldTransform;
     Qt::MouseButton mMouseButton;
-    int mOffsetMousePos;
-    QRect mOldItemRect;
+    //int mOffsetMousePos;
+
     Side mActiveTransformArrow;
 
-    QRect mBoundingRect;
     QRect mOldRectSelectedItem;
+    QRect mBoundingRect;
+
     bool mIsShowing; //убрать, mIsShowing = isHasSelectedItem()
 #ifdef VIEW_PAINT_RECT_DEBUG
     QVector <QRectF> mDebugRects;

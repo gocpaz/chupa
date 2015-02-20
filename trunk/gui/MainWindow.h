@@ -8,6 +8,13 @@ namespace Ui {
     class MainWindow;
 }
 
+#ifdef DEBUG_EDITOR
+#include "DebugSchemaDesign.h"
+#endif
+
+
+class AzGraphicsView;
+
 //#define DEBUG_USE_NATIVE
 
 class MainWindow : public QMainWindow
@@ -22,10 +29,18 @@ public slots:
 private slots:
     void tabClosed(int);
     void leftBtnClicked();
+#ifdef DEBUG_EDITOR
+    void mouseMoveView(QMouseEvent * event);
+    void selectionChanged();
+#endif
 private:
     QGraphicsView *currentView() const;
+    void showItemCoord();
     Ui::MainWindow *ui;
-    QGraphicsView *mView;
+    AzGraphicsView *mView;
+#ifdef DEBUG_EDITOR
+    DebugSchemaDesign *mDebugWin;
+#endif
 };
 
 #endif // MAINWINDOW_H

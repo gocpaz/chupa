@@ -30,9 +30,13 @@ ArrowsPolygon::ArrowsPolygon():mPolygons(ARROWS_COUNT)  {
 
 QPolygon ArrowsPolygon::originalPolygon() {
     QPolygon res;
+    const int tipWidth  = 4;
+    const int tipHeight = 8;
+    const int shaftWidth = 1;
+    const int shaftHeight = 4;
     res << QPoint(0,0)
-        << QPoint(8,9)      << QPoint(2,9)     << QPoint(2,12)  << QPoint(8,12)
-        << QPoint(0,20);
+        << QPoint(tipWidth,tipHeight) << QPoint(shaftWidth,tipHeight)<< QPoint(shaftWidth,shaftHeight+tipHeight)  << QPoint(tipWidth,shaftHeight+tipHeight)
+        << QPoint(0,2*tipHeight+shaftHeight);
     for (int i = 4; i > 0; --i) { //mirror half arrow
        res << QPoint(res[i].x() * -1,res[i].y());
     }
@@ -57,8 +61,8 @@ void ArrowsPolygon::calcPolygons() {
       const QPolygon polygon = originalPolygon();
       const int polygonSize = polygon.size();
       for (int j = 0; j < polygonSize; ++j) { //вычисляем стрелочки
-          const qreal x = polygon[j].x() *degCos + polygon[j].y()*degSin;
-          const qreal y = -polygon[j].x()*degSin + polygon[j].y()*degCos;
+          const int x = qRound(polygon[j].x() *degCos + polygon[j].y()*degSin);
+          const int y = qRound(-polygon[j].x()*degSin + polygon[j].y()*degCos);
           mPolygons[i] << QPoint(x,y);
       }
     }
@@ -172,7 +176,6 @@ void AzGraphicsSelectedItemArrow::show(QPainter *painter,const QRectF rect){
 
 	calcArrows();
 
-
     QVector<int> arrowsList;
     if (mActiveTransformArrow == NotArrow) {
        arrowsList = containsArrows(mView->mapFromScene(rect).boundingRect());
@@ -243,16 +246,8 @@ void AzGraphicsSelectedItemArrow::mousePressEvent(QMouseEvent * event) {
     mMouseButton = event->button(); //save button state for mouse move event
     if (mSideLight != NotArrow) {
        mActiveTransformArrow = mSideLight;  //set transform state arrow
-       //*/mOldItemRect = itemRect();
-//       QPoint pos = mView->mapFromScene(selectedItem()->pos());
-//       mOldItemRect.setTopLeft(pos);
-//       qDebug() << pos;
-//       mOldItemRect.setSize(mView->mapFromScene(selectedItem()->boundingRect()).boundingRect().size());
-
-
-       //mOffsetMousePos = event->pos().y() - itemRect().bottom(); //позиция относительно стрелки
-       //qDebug() << mOldItemRect << selectedItem()->transform().map( selectedItem()->boundingRect());
-       //setCursor(mActiveTransformArrow);*/
+       mOldRectTransform = mView->mapFromScene(selectedItem()->sceneBoundingRect()).boundingRect();
+       mOldTransform = selectedItem()->transform();
        event->setAccepted(false); //блокируем, чтобы не пропадал selected не изменялось
     }
 }
@@ -260,7 +255,7 @@ void AzGraphicsSelectedItemArrow::mousePressEvent(QMouseEvent * event) {
 void AzGraphicsSelectedItemArrow::mouseReleaseEvent(QMouseEvent *) {
     mMouseButton = Qt::NoButton;
     if (mActiveTransformArrow != NotArrow) {
-        mView->scene()->invalidate(boundingRectToScene(),QGraphicsScene::ForegroundLayer);
+        mView->scene()->invalidate(boundingRectToScene(),QGraphicsScene::ForegroundLayer); //restore color
         mActiveTransformArrow = NotArrow;
     }
     //setCursor(NotArrow);
@@ -290,18 +285,13 @@ void AzGraphicsSelectedItemArrow::mouseMoveEvent(QMouseEvent *event){
 
     if (mActiveTransformArrow != AzGraphicsSelectedItemArrow::NotArrow) {
         if (mMouseButton == Qt::LeftButton) {
-            int height = selectedItem()->boundingRect().height(); //original height
-
-//            int delta = event->y() - (mOldItemRect.y() + height) - mOffsetMousePos; //length from current pos to original pos
-//            int scaleHeight = delta + height;
-//            qreal scale = (qreal)(scaleHeight) / (qreal)(height);
-
-            int scaleHeight = event->y() - selectedItem()->pos().y();
+            int height = mOldRectTransform.height();
+            int scaleHeight = event->y() - mOldRectTransform.y();
             qreal scale = (qreal)(scaleHeight) / height;
-            qDebug() << height;
 
             QTransform trans ;
             trans.scale(1,scale); //y - m22
+            trans *= mOldTransform;
             selectedItem()->setTransform(trans);
         }
     }
@@ -368,6 +358,8 @@ void AzGraphicsSelectedItemArrow::itemMoved(const QPoint&,const QPoint&) {
 //      mView->scene()->invalidate(mView->mapToScene(rect).boundingRect(),QGraphicsScene::ForegroundLayer);
 //   }
 }
+
+
 
 QRectF AzGraphicsSelectedItemArrow::boundingRectToScene() const {
     return mView->mapToScene(mBoundingRect).boundingRect();
