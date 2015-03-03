@@ -13,8 +13,7 @@ Q_OBJECT
 public:
     AzGraphicsView(QGraphicsScene *, QWidget * = 0);
     ~AzGraphicsView();
-    void setShowArrow(bool val)                 { mShowArrow = val;}
-    bool showArrow() const              { return mShowArrow; }
+    void setShowArrow(bool val);
 #ifdef DEBUG_EDITOR
 signals:
     void mouseMove(QMouseEvent * event);
@@ -30,7 +29,7 @@ protected:
     void drawForeground(QPainter * painter, const QRectF & rect);
 private:
     void setScene(QGraphicsScene *);
-    AzGraphicsSelectedItemArrow mArrows;
+    AzGraphicsSelectedItemArrow mArrows; //убрать, нет смысла
     bool mShowArrow;
 
     AzGraphicsSelectedItemArrow::Side mActiveTransformArrow;

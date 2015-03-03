@@ -62,7 +62,7 @@
      <x>0</x>
      <y>0</y>
      <width>593</width>
-     <height>21</height>
+     <height>19</height>
     </rect>
    </property>
   </widget>
@@ -78,11 +78,24 @@
    </attribute>
    <addaction name="actionCenterSelected"/>
   </widget>
+  <widget class="QToolBar" name="tbTransform">
+   <property name="windowTitle">
+    <string>toolBar_2</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>LeftToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionRotateLeft"/>
+   <addaction name="actionRotateRight"/>
+  </widget>
   <action name="actionCenterSelected">
    <property name="icon">
-    <iconset>
-     <normalon>:/btn/images/zoom-select.png</normalon>
-    </iconset>
+    <iconset resource="../res.qrc">
+     <normaloff>:/btn/gui/images/zoom-select.png</normaloff>
+     <normalon>:/btn/images/zoom-select.png</normalon>:/btn/gui/images/zoom-select.png</iconset>
    </property>
    <property name="text">
     <string>centerSelected</string>
@@ -91,9 +104,27 @@
     <string>Center view on selected item</string>
    </property>
   </action>
+  <action name="actionRotateLeft">
+   <property name="icon">
+    <iconset resource="../res.qrc">
+     <normaloff>:/btn/gui/images/object-rotate-left.png</normaloff>:/btn/gui/images/object-rotate-left.png</iconset>
+   </property>
+   <property name="text">
+    <string>Rotate Left 90</string>
+   </property>
+  </action>
+  <action name="actionRotateRight">
+   <property name="icon">
+    <iconset resource="../res.qrc">
+     <normaloff>:/btn/gui/images/zoom-select.png</normaloff>:/btn/gui/images/zoom-select.png</iconset>
+   </property>
+   <property name="text">
+    <string>Rotate Right 90</string>
+   </property>
+  </action>
  </widget>
  <resources>
-  <include location="res.qrc"/>
+  <include location="../res.qrc"/>
  </resources>
  <connections/>
 </ui>

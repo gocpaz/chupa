@@ -1,5 +1,0 @@
-<RCC>
-  <qresource prefix="btn">
-    <file>images/zoom-select.png</file>
-  </qresource>
-</RCC>
