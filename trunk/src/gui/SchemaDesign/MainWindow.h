@@ -4,6 +4,9 @@
 #include <QMainWindow>
 #include <QGraphicsView>
 
+#include "AzGraphicsItem.h"
+#include "AzGraphicsView.h"
+
 namespace Ui {
     class MainWindow;
 }
@@ -11,9 +14,6 @@ namespace Ui {
 #ifdef DEBUG_EDITOR
 #include "DebugSchemaDesign.h"
 #endif
-
-
-class AzGraphicsView;
 
 //#define DEBUG_USE_NATIVE
 
@@ -28,17 +28,23 @@ public slots:
     void zoomView(int);
 private slots:
     void tabClosed(int);
-    void leftBtnClicked();
+    void setBtnEnabled();
+    void selectionChanged();
+    void rotateLeft90();
+    void rotateRight90();
 #ifdef DEBUG_EDITOR
     void mouseMoveView(QMouseEvent * event);
-    void selectionChanged();
+
 #endif
 private:
-    QGraphicsView *currentView() const;
-    void showItemCoord();
+    inline bool hasSelected() const                { return mCurrentView->scene()->selectedItems().size() > 0; }
+    inline QGraphicsItem* selectedItem() const     { return hasSelected() ?  mCurrentView->scene()->selectedItems()[0] : 0;}
+
     Ui::MainWindow *ui;
-    AzGraphicsView *mView;
+    AzGraphicsView *mCurrentView;
+    int mDebugRotate;
 #ifdef DEBUG_EDITOR
+    void showItemCoord();
     DebugSchemaDesign *mDebugWin;
 #endif
 };
