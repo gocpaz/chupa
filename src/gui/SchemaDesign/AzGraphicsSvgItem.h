@@ -6,7 +6,6 @@
 
 class AzGraphicsSvgItem : public QGraphicsSvgItem {
 public:
-    AzGraphicsSvgItem();
     AzGraphicsSvgItem(QGraphicsItem * = 0);
     AzGraphicsSvgItem(const QString &, QGraphicsItem * = 0);
     ~AzGraphicsSvgItem();
@@ -19,8 +18,6 @@ public:
 protected:
     QVariant itemChange(GraphicsItemChange change, const QVariant & value);
 private:
-    bool mInTransformChange; //if transform change
-    QRectF mOldRect; //old state rect;
 };
 
 #endif // AZGRAPHICSSVGITEM_H

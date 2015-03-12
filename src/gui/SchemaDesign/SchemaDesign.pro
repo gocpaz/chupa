@@ -1,21 +1,24 @@
 QT       += widgets svg
 
+INCLUDEPATH += ../widgets/ZoomSlider
 
 TEMPLATE = app
 
-DESTDIR = ../../../bin
+DESTDIR = ../../../../bin
 
 INCLUDEPATH += ../../
 
 HEADERS += 	MainWindow.h \
 		AzGraphicsSvgItem.h \
-	    AzGraphicsSelectedItemArrow.h \
 	    AzGraphicsView.h \
 	    AzGraphicsScene.h \
 	    AzGraphicsItem.h \
 	    DebugSchemaDesign.h \
 	    ../../AzChupa.h \
-    DesignView.h
+    DesignView.h \
+    ../widgets/ZoomSlider/AzZoomSlider.h \
+    AzTransformArrows.h \
+    AzSelectedItemPolygonArrows.h
 
 CONFIG+=debug_and_release
 
@@ -23,12 +26,14 @@ CONFIG+=debug_and_release
 SOURCES += main.cpp \
 	   MainWindow.cpp \
 	    AzGraphicsSvgItem.cpp \
-	    AzGraphicsSelectedItemArrow.cpp \
 	    AzGraphicsView.cpp \
 	    AzGraphicsScene.cpp \
 	    AzGraphicsItem.cpp \
 	    DebugSchemaDesign.cpp \
-    DesignView.cpp
+    DesignView.cpp \
+    ../widgets/ZoomSlider/AzZoomSlider.cpp \
+    AzTransformArrows.cpp \
+    AzSelectedItemPolygonArrows.cpp
 
 
 FORMS    += MainWindow.ui

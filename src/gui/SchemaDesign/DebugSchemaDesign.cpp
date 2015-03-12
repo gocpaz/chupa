@@ -10,3 +10,6 @@ DebugSchemaDesign::~DebugSchemaDesign()
 
 }
 
+void DebugSchemaDesign::addMessage(const QString& message) {
+    ui->plainTextEdit->appendPlainText(message);
+}

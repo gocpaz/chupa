@@ -7,12 +7,8 @@
 
 AzGraphicsView::AzGraphicsView(QGraphicsScene * scene, QWidget * parent):
     QGraphicsView(parent),mArrows(this) {
-    mActiveTransformArrow = AzGraphicsSelectedItemArrow::NotArrow;
     setScene(scene);
-    setShowArrow(false);
-
-
-
+    setShowSelectedArrow(false);
 }
 
 AzGraphicsView::~AzGraphicsView() {
@@ -24,12 +20,9 @@ AzGraphicsView::~AzGraphicsView() {
  * \param val
  * Показывать стрелочки или нет. Тaкже устанавливает setMousetTraking - ловить передвижение мыши всегда (если true)
  */
-void AzGraphicsView::setShowArrow(bool val) {
+void AzGraphicsView::setShowSelectedArrow(bool val) {
     mShowArrow = val;
     setMouseTracking(val);
-
-    //selectionChanged();
-    //mArrows.scale(AzGraphicsSelectedItemArrow::NPos,QPoint(0,160));
 }
 
 /*!
@@ -44,7 +37,6 @@ void AzGraphicsView::setScene(QGraphicsScene *scene) {
         connect(scene,SIGNAL(selectionChanged()),this,SLOT(selectionChanged()));
         connect(azScene,SIGNAL(moveItemEvent(QPointF,QPointF)),this,SLOT(moveItemEvent(QPointF,QPointF)));
     }
-
 }
 
 void AzGraphicsView::drawForeground(QPainter * painter, const QRectF & rect) {
@@ -56,11 +48,6 @@ void AzGraphicsView::drawForeground(QPainter * painter, const QRectF & rect) {
 void AzGraphicsView::selectionChanged() {
     if (mShowArrow)
         mArrows.selectionChanged();
-}
-
-void AzGraphicsView::moveItemEvent(const QPointF&, const QPointF&) {
-//    if (mShowArrow)
-//        mArrows.itemMoved(mapFromScene(oldPos),mapFromScene(newPos));
 }
 
 void AzGraphicsView::mousePressEvent(QMouseEvent * event) {
@@ -76,10 +63,14 @@ void AzGraphicsView::mouseReleaseEvent(QMouseEvent * event) {
     QGraphicsView::mouseReleaseEvent(event);
 }
 
-void AzGraphicsView::mouseDoubleClickEvent(QMouseEvent * event) {
-    if (mActiveTransformArrow != AzGraphicsSelectedItemArrow::NotArrow) //ignore DB click as single click (lost selected)
-        return;
-    QGraphicsView::mouseDoubleClickEvent(event);
+/*!
+ * ignore all dbClick -
+ *
+ */
+void AzGraphicsView::mouseDoubleClickEvent(QMouseEvent *) {
+//    if (mActiveTransformArrow != AzTransformArrow::NotArrow) //ignore DB click as single click (lost selected)
+//        return;
+   // QGraphicsView::mouseDoubleClickEvent(event);
 }
 
 void AzGraphicsView::mouseMoveEvent(QMouseEvent * event) {

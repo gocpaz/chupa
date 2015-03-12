@@ -4,7 +4,7 @@
 #include <QMouseEvent>
 #include <QGraphicsView>
 
-#include "AzGraphicsSelectedItemArrow.h"
+#include "AzTransformArrows.h"
 
 
 class AzGraphicsView : public QGraphicsView
@@ -13,14 +13,13 @@ Q_OBJECT
 public:
     AzGraphicsView(QGraphicsScene *, QWidget * = 0);
     ~AzGraphicsView();
-    void setShowArrow(bool val);
+    void setShowSelectedArrow(bool val);
 #ifdef DEBUG_EDITOR
 signals:
     void mouseMove(QMouseEvent * event);
 #endif
 protected slots:
     void selectionChanged();
-    void moveItemEvent(const QPointF&, const QPointF&);
 protected:
     void mousePressEvent(QMouseEvent * event);
     void mouseReleaseEvent(QMouseEvent * event);
@@ -29,11 +28,8 @@ protected:
     void drawForeground(QPainter * painter, const QRectF & rect);
 private:
     void setScene(QGraphicsScene *);
-    AzGraphicsSelectedItemArrow mArrows; //убрать, нет смысла
+    AzTransformArrow mArrows; //убрать, нет смысла, заменить на динамику, проверять на валидность объекта
     bool mShowArrow;
-
-    AzGraphicsSelectedItemArrow::Side mActiveTransformArrow;
-
 };
 
 #endif // AZGRAPHICSVIEW_H
