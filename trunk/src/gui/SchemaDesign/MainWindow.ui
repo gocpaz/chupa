@@ -17,8 +17,8 @@
    <bool>false</bool>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QVBoxLayout" name="verticalLayout_2">
-    <item>
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
        <widget class="QTabWidget" name="tabWidget">
@@ -37,20 +37,52 @@
        </widget>
       </item>
       <item>
-       <widget class="QSlider" name="zoomSpider">
-        <property name="maximum">
-         <number>1000</number>
-        </property>
-        <property name="value">
-         <number>500</number>
-        </property>
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="tickPosition">
-         <enum>QSlider::TicksAbove</enum>
-        </property>
-       </widget>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="AzZoomSlider" name="zoomSlider">
+          <property name="whatsThis">
+           <string>The slider for control zoom in %</string>
+          </property>
+          <property name="maximumScale">
+           <double>16.000000000000000</double>
+          </property>
+          <property name="singleStep">
+           <number>10</number>
+          </property>
+          <property name="pageStep">
+           <number>20</number>
+          </property>
+          <property name="tickPosition">
+           <enum>QSlider::TicksAbove</enum>
+          </property>
+          <property name="tickInterval">
+           <number>20</number>
+          </property>
+          <property name="suffix">
+           <string>%</string>
+          </property>
+          <property name="desimals">
+           <number>1</number>
+          </property>
+          <property name="value">
+           <double>1.000000000000000</double>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
      </layout>
     </item>
@@ -77,6 +109,8 @@
     <bool>false</bool>
    </attribute>
    <addaction name="actionCenterSelected"/>
+   <addaction name="actionZoomOut"/>
+   <addaction name="actionZoomIn"/>
   </widget>
   <widget class="QToolBar" name="tbTransform">
    <property name="windowTitle">
@@ -93,12 +127,12 @@
   </widget>
   <action name="actionCenterSelected">
    <property name="icon">
-    <iconset resource="../res.qrc">
+    <iconset>
      <normaloff>:/btn/gui/images/zoom-select.png</normaloff>
      <normalon>:/btn/images/zoom-select.png</normalon>:/btn/gui/images/zoom-select.png</iconset>
    </property>
    <property name="text">
-    <string>centerSelected</string>
+    <string>Center view on selected item</string>
    </property>
    <property name="toolTip">
     <string>Center view on selected item</string>
@@ -106,8 +140,8 @@
   </action>
   <action name="actionRotateLeft">
    <property name="icon">
-    <iconset resource="../res.qrc">
-     <normaloff>:/btn/gui/images/object-rotate-left.png</normaloff>:/btn/gui/images/object-rotate-left.png</iconset>
+    <iconset resource="res.qrc">
+     <normaloff>:/btn/images/object-rotate-left.png</normaloff>:/btn/images/object-rotate-left.png</iconset>
    </property>
    <property name="text">
     <string>Rotate Left 90</string>
@@ -115,16 +149,51 @@
   </action>
   <action name="actionRotateRight">
    <property name="icon">
-    <iconset resource="../res.qrc">
-     <normaloff>:/btn/gui/images/zoom-select.png</normaloff>:/btn/gui/images/zoom-select.png</iconset>
+    <iconset resource="res.qrc">
+     <normaloff>:/btn/images/object-rotate-right.png</normaloff>:/btn/images/object-rotate-right.png</iconset>
    </property>
    <property name="text">
     <string>Rotate Right 90</string>
    </property>
   </action>
+  <action name="actionZoomIn">
+   <property name="icon">
+    <iconset resource="res.qrc">
+     <normaloff>:/btn/images/zoom-in.png</normaloff>:/btn/images/zoom-in.png</iconset>
+   </property>
+   <property name="text">
+    <string>Zoom in</string>
+   </property>
+   <property name="toolTip">
+    <string>Increas zoom</string>
+   </property>
+  </action>
+  <action name="actionZoomOut">
+   <property name="icon">
+    <iconset resource="res.qrc">
+     <normaloff>:/btn/images/zoom-out.png</normaloff>:/btn/images/zoom-out.png</iconset>
+   </property>
+   <property name="text">
+    <string>Zoom out</string>
+   </property>
+   <property name="toolTip">
+    <string>Decrease zoom</string>
+   </property>
+  </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>AzZoomSlider</class>
+   <extends>QWidget</extends>
+   <header>AzZoomSlider.h</header>
+  </customwidget>
+ </customwidgets>
  <resources>
-  <include location="../res.qrc"/>
+  <include location="res.qrc"/>
  </resources>
  <connections/>
+ <slots>
+  <slot>sliderZoomChanged(int)</slot>
+  <slot>spinboxZoomChanged(double)</slot>
+ </slots>
 </ui>

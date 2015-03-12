@@ -14,6 +14,7 @@ public:
     explicit DebugSchemaDesign(QWidget *parent = 0);
     ~DebugSchemaDesign();
     Ui::DebugSchemaDesign *ui;
+    void addMessage(const QString&);
 };
 
 #endif // DEBUGSCHEMADESIGN_H

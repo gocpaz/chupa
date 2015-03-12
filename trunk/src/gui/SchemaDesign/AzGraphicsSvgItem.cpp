@@ -9,16 +9,15 @@
 
 #include "AzChupa.h"
 
-AzGraphicsSvgItem::AzGraphicsSvgItem() {
-}
 
 AzGraphicsSvgItem::AzGraphicsSvgItem(QGraphicsItem *parent):QGraphicsSvgItem(parent) {
-    mInTransformChange = false;
-
+     setFlag(ItemIsSelectable,true);
+     setFlag(ItemIsMovable,true);
 }
 
 AzGraphicsSvgItem::AzGraphicsSvgItem(const QString &fileName, QGraphicsItem * parent):QGraphicsSvgItem(fileName,parent) {
-    mInTransformChange = false;
+     setFlag(ItemIsSelectable,true);
+     setFlag(ItemIsMovable,true);
 }
 
 AzGraphicsSvgItem::~AzGraphicsSvgItem() {
@@ -28,7 +27,7 @@ AzGraphicsSvgItem::~AzGraphicsSvgItem() {
 /*!
  * \brief AzGraphicsSvgItem::mapTo
  * \return данные, с учетом transform
- * Возвращает изображение, полученое после трансформации.
+ * Возвращает изображение с учетом трансформации
  */
 QByteArray AzGraphicsSvgItem::mapTo()  {
     QBuffer buffer;
@@ -76,21 +75,10 @@ void AzGraphicsSvgItem::fixTransofm() {
 }
 
 void AzGraphicsSvgItem::paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget) {
-//    bool isSelectable = flags() & QGraphicsItem::ItemIsSelectable;
-//    if (isSelectable) {
-//        setFlag(QGraphicsItem::ItemIsSelectable,false);
-//        painter->drawRect(boundingRect());
-//    }
-    //painter->drawRect(boundingRect());
     QGraphicsSvgItem::paint(painter,option,widget);
-    //setFlag(QGraphicsItem::ItemIsSelectable,isSelectable);
 }
 
 QVariant AzGraphicsSvgItem::itemChange(GraphicsItemChange change, const QVariant & value) {
-//    if (change == ItemSelectedHasChanged) {
-//            setFlag(ItemSendsGeometryChanges,isSelected()); //turn on geometry change
-//    }
-
-    //qDebug() << change << "selected" << isSelected();
+    Q_UNUSED(change);
     return value;
 }

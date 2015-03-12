@@ -2,7 +2,7 @@
 
 #include <QDebug>
 #include <QGraphicsSceneMouseEvent>
-#include "AzGraphicsSelectedItemArrow.h"
+#include "AzTransformArrows.h"
 #include "AzGraphicsPoligonItem.h"
 
 

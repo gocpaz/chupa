@@ -3,7 +3,7 @@
 
 #include <QGraphicsScene>
 #include <QGraphicsItem>
-#include "AzGraphicsSelectedItemArrow.h"
+#include "AzTransformArrows.h"
 #include "AzGraphicsPoligonItem.h"
 
 class AzGraphicsScene : public QGraphicsScene

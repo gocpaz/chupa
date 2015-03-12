@@ -1,7 +1,9 @@
 <RCC>
-  <qresource prefix="btn">
-    <file>../images/zoom-select.png</file>
-    <file>../images/object-rotate-right.png</file>
-    <file>../images/object-rotate-left.png</file>
-  </qresource>
+    <qresource prefix="/btn">
+        <file>../images/zoom-select.png</file>
+        <file>../images/object-rotate-right.png</file>
+        <file>../images/object-rotate-left.png</file>
+        <file>../images/zoom-in.png</file>
+        <file>../images/zoom-out.png</file>
+    </qresource>
 </RCC>

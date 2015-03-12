@@ -6,27 +6,79 @@
 #include <QGraphicsSvgItem>
 #include <QtMath>
 #include <QPushButton>
+#include <math.h>
 
 #include "AzGraphicsScene.h"
 #include "AzGraphicsSvgItem.h"
 #include "AzGraphicsPoligonItem.h"
 #include "AzGraphicsView.h"
 #include "AzGraphicsItem.h"
+#include "DesignView.h"
 
+
+#ifdef DEBUG_EDITOR
+    static DebugSchemaDesign *debugOutput;
+
+    void debugMessageOutput(QtMsgType, const QMessageLogContext &, const QString & msg) {
+        if (!debugOutput)
+            return;
+        debugOutput->addMessage(msg);
+    }
+#endif
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
+    mCurrentDesignView = 0;
 #ifdef DEBUG_EDITOR
-     mDebugWin = new DebugSchemaDesign(ui->centralwidget);
-     ui->verticalLayout->addWidget(mDebugWin);
-#endif
-     mDebugRotate = 0;
-    connect(ui->tabWidget,SIGNAL(tabCloseRequested(int)),this,SLOT(tabClosed(int)));
-    addElementEditTab();
-#ifdef DEBUG_EDITOR
-    connect(mCurrentView,SIGNAL(mouseMove(QMouseEvent*)),this,SLOT(mouseMoveView(QMouseEvent*)));
+    mDebugWin = new DebugSchemaDesign(ui->centralwidget);
+    debugOutput = mDebugWin;
+    ui->verticalLayout->addWidget(mDebugWin);
+    //qInstallMessageHandler(debugMessageOutput);
+    setMouseTracking(true);
+    qDebug() << "Start debug version";
+    connect(ui->actionRotateRight,SIGNAL(triggered()),this,SLOT(rotateRight90()));
 #endif
 
+    connect(ui->tabWidget,SIGNAL(tabCloseRequested(int)),this,SLOT(tabClosed(int))); //close tab event
+    connect(ui->tabWidget,SIGNAL(currentChanged(int)),this,SLOT(currentViewChanged(int))); //change view
+    newView();
+}
+
+MainWindow::~MainWindow() {
+#ifdef DEBUG_EDITOR
+    debugOutput = 0;
+    qInstallMessageHandler(0);
+#endif
+    delete ui;
+}
+
+/*!
+ * \brief MainWindow::tabClosed
+ * \param tabIndex
+ * Закрываем таб и удаляем ресурсы
+ */
+void MainWindow::tabClosed(int tabIndex) {
+  QWidget *widget = ui->tabWidget->widget(tabIndex);
+  delete widget;
+}
+
+
+/*!
+ * \brief MainWindow::newView
+ * \param name
+ * Add new empty view
+ */
+void MainWindow::newView(const QString& name) {
+    DesignView *designView = new DesignView;
+    ui->tabWidget->addTab(designView,name);
+
+
+    AzGraphicsSvgItem *svg = new AzGraphicsSvgItem("comp.svg");
+    svg->setPos(50,50);
+    designView->addItem(svg);
+
+    AzGraphicsSvgItem *svg2 = new AzGraphicsSvgItem("comp.svg");
+    designView->addItem(svg2);
 
 }
 
@@ -35,29 +87,33 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
  * \brief MainWindow::mouseMoveView
  * Получаем с view mouseMoveEvent
  */
-void MainWindow::mouseMoveView(QMouseEvent * event) {
-    //QPointF pos = mView->mapToScene(event->pos());
-    QPoint pos = event->pos();
-    mDebugWin->ui->lbViewPortCoord->setText(QString::number(pos.x())+'x'+QString::number(pos.y()));
-    QPointF scenePos = mCurrentView->mapToScene(pos);
-    //scenePos = setX();
-    mDebugWin->ui->lbSceneCoord->setText(QString::number(scenePos.x())+'x'+QString::number(scenePos.y()));
-    showItemCoord();
-}
+//void MainWindow::mouseMoveView(QMouseEvent *) {
+//    //QPointF pos = mView->mapToScene(event->pos());
+//    QPoint pos = event->pos();
+//    mDebugWin->ui->lbViewPortCoord->setText(QString::number(pos.x())+'x'+QString::number(pos.y()));
+//    QPointF scenePos = mCurrentView->mapToScene(pos);
+//    //scenePos = setX();
+//    mDebugWin->ui->lbSceneCoord->setText(QString::number(scenePos.x())+'x'+QString::number(scenePos.y()));
+//    showItemCoord();
+//}
 
 void MainWindow::showItemCoord() {
-    QGraphicsItem *item = (mCurrentView->scene()->selectedItems().size() > 0) ? mCurrentView->scene()->selectedItems()[0] : 0;
+    QGraphicsItem *item = (mCurrentDesignView->scene()->selectedItems().size() > 0) ? mCurrentDesignView->scene()->selectedItems()[0] : 0;
     if (item) {
-        QRect rect = mCurrentView->mapFromScene(item->sceneBoundingRect()).boundingRect();
-        QPointF scenePos = item->sceneBoundingRect().center();
-        //QPointF scenePos = item->pos();
+        QRect rect = mCurrentDesignView->view()->mapFromScene(item->sceneBoundingRect()).boundingRect();
+        QRectF sceneRect = item->sceneBoundingRect();
+        mDebugWin->ui->sceneRect->setText(QString::number(sceneRect.x())+','+QString::number(sceneRect.y())+' '+QString::number(sceneRect.width())+'x'+QString::number(sceneRect.height()));
 
-        mDebugWin->ui->lbScenePos->setText(QString::number(scenePos.x())+'x'+QString::number(scenePos.y()));
-        mDebugWin->ui->lbViewPos->setText(QString::number(rect.x())+'x'+QString::number(rect.y()));
-        mDebugWin->ui->lbViewSize->setText(QString::number(rect.width())+'x'+QString::number(rect.height()));
+        mDebugWin->ui->viewRect->setText(QString::number(rect.x())+'x'+QString::number(rect.y()));
+        //mDebugWin->ui->lbViewSize->setText(QString::number(rect.width())+'x'+QString::number(rect.height()));
     } else {
-        mDebugWin->ui->lbScenePos->setText("");
+        mDebugWin->ui->sceneRect->setText("");
+        mDebugWin->ui->viewRect->setText("");
     }
+}
+
+void MainWindow::mouseMoveEventView(QMouseEvent *) {
+   showItemCoord();
 }
 
 #endif
@@ -70,143 +126,52 @@ void MainWindow::selectionChanged() {
 }
 
 
-void MainWindow::addElementEditTab() {
-
-QWidget *w = new QWidget(this);
-
-#ifdef DEBUG_USE_NATIVE
-    QGraphicsScene *scene = new QGraphicsScene(this);
-
-    QGraphicsView *view2 = new QGraphicsView(scene,w);
-    QGraphicsView *view = new QGraphicsView(scene,w);
-
-    QGraphicsSvgItem *svg = new QGraphicsSvgItem("comp.svg");
-#else
-   QGraphicsScene *scene = new AzGraphicsScene(this);
-
-   AzGraphicsView *view2 = new AzGraphicsView(scene,w);
-   AzGraphicsView *view = new AzGraphicsView(scene,w);
-
-   AzGraphicsSvgItem *svg = new AzGraphicsSvgItem("comp.svg");
-
-#endif
-
-   //view->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
-
-   mCurrentView = view;
-
-   QTransform trans;
-   trans.rotate(45);
-   //svg->setTransform(trans);
-
-   scene->setSceneRect(-0,-0,5000,5000);
-
-    QGraphicsRectItem *rectItem = new QGraphicsRectItem;
-    rectItem->setRect(0,0,100,100);
-    rectItem->setPos(50,150);
-    rectItem->setFlag(QGraphicsItem::ItemIsSelectable,true);
-    rectItem->setFlag(QGraphicsItem::ItemIsMovable,true);
-    scene->addItem(rectItem);
-
-   svg->setFlag(QGraphicsItem::ItemIsSelectable,true);
-   svg->setFlag(QGraphicsItem::ItemIsMovable,true);
-   svg->setFlag(QGraphicsItem::ItemIgnoresTransformations,false);
-   scene->addItem(svg);
-
-   AzGraphicsSvgItem *svgClone = svg->clone();
-   svgClone->setPos(50,150);
-   scene->addItem(svgClone);
-
-
-
-   QHBoxLayout *l = new QHBoxLayout(w);
-
-
-
-   l->addWidget(view);
-   l->addWidget(view2);
-
-   connect(ui->zoomSpider,SIGNAL(sliderMoved(int)),this,SLOT(zoomView(int)));   
-   connect(mCurrentView->scene(),SIGNAL(selectionChanged()),this,SLOT(selectionChanged()));
-   connect(ui->actionRotateLeft,SIGNAL(triggered()),this,SLOT(rotateLeft90()));
-   connect(ui->actionRotateRight,SIGNAL(triggered()),this,SLOT(rotateRight90()));
-
-   selectionChanged();
-
-
-   ui->tabWidget->addTab(w,"editTab");
-
-    svgClone->setSelected(true);
-    view->setShowArrow(true);
-    //view2->setShowArrow(true);
-
-
-}
-
-
-MainWindow::~MainWindow() {
-    delete ui;
-}
-
-
-/*!
- * \brief MainWindow::tabClosed
- * \param tabIndex
- * Закрываем таб и удаляем ресурсы - сцену и вьюху.
- */
-void MainWindow::tabClosed(int tabIndex) {
-    QGraphicsView *view = dynamic_cast<QGraphicsView*>(ui->tabWidget->widget(tabIndex));
-    if (view) {
-        delete view->scene();
-        delete view;
-    }
-    ui->tabWidget->removeTab(tabIndex);
-}
-
-void MainWindow::zoomView(int) {
-    QAbstractSlider *slider = dynamic_cast<QAbstractSlider*>(sender());
-    if (slider) {
-        qreal scale = qPow(2.0,(slider->value()-slider->maximum()/2)/100.0);
-        QMatrix matrix;
-        matrix.scale(scale,scale);
-        mCurrentView->setMatrix(matrix);
-    }
-}
 
 void MainWindow::setBtnEnabled() {
-    bool selected = mCurrentView->scene()->selectedItems().size() > 0;
-    ui->actionRotateLeft->setEnabled(selected);
-    ui->actionRotateRight->setEnabled(selected);
+//    bool selected = mCurrentView->scene()->selectedItems().size() > 0;
+//    ui->actionRotateLeft->setEnabled(selected);
+//    ui->actionRotateRight->setEnabled(selected);
 }
 
 void MainWindow::rotateLeft90() {
-    AzGraphicsSvgItem *item = dynamic_cast<AzGraphicsSvgItem *>(selectedItem());
-   if (item) {
-       QTransform trans;
-       trans.rotate(-90);
-       item->setTransform(trans);
-       item->fixTransofm();
+//    AzGraphicsSvgItem *item = dynamic_cast<AzGraphicsSvgItem *>(selectedItem());
+//   if (item) {
+//       QTransform trans;
+//       trans.rotate(-90);
+//       item->setTransform(trans);
+//       item->fixTransofm();
 
-   }
+//   }
 }
 
 void MainWindow::rotateRight90() {
-    AzGraphicsSvgItem *item = dynamic_cast<AzGraphicsSvgItem *>(selectedItem());
+    QGraphicsItem *qitem = 0;
+    if (mCurrentDesignView->scene()->selectedItems().size() > 0)
+        qitem = mCurrentDesignView->scene()->selectedItems()[0];
+    AzGraphicsSvgItem *item = dynamic_cast<AzGraphicsSvgItem *>(qitem);
     if (item) {
-        const QRectF sceneRect = item->boundingRect();
-        const QPointF center = sceneRect.center();
-//        item->setTransformOriginPoint(item->boundingRect().center());
-//        item->setRotation(item->rotation() + 1);
+        QTransform trans;
+        trans.shear(-2,0);
+        item->setTransform(trans);
+    }
+}
 
-        mDebugRotate+=10;
-        QTransform t1,t2,t3;
-        t1.translate(-center.x(),-center.y());
-        t2.rotate(mDebugRotate);
-        t3.translate(center.x(),center.y());
-
-//        item->setTransformOriginPoint(item->boundingRect().center());
-//        trans.rotate(90);
-        item->setTransform(t1*t2*t3);
-
+/*!
+ * \brief MainWindow::viewChanged
+ * Вызывается при смене активного вью, где tab - активный таб. Если -1 - нет выделеных табов
+ */
+void MainWindow::currentViewChanged(int tab) {
+    if (mCurrentDesignView) {
+        disconnect(mCurrentDesignView,0,this,0);
+        disconnect(ui->zoomSlider,0,mCurrentDesignView,0);
+    }
+    //ui->tabWidget->widget(tab) - return 0 if tab out of range
+    mCurrentDesignView = dynamic_cast<DesignView*>(ui->tabWidget->widget(tab));
+    if (mCurrentDesignView) {
+        connect(mCurrentDesignView,SIGNAL(selectionChanged()),this,SLOT(selectionChanged()));
+        connect(ui->zoomSlider,SIGNAL(scaleChanged(qreal)),mCurrentDesignView,SLOT(setScale(qreal)));
+#ifdef DEBUG_EDITOR
+        connect(mCurrentDesignView,SIGNAL(mouseMoveView(QMouseEvent*)),this,SLOT(mouseMoveEventView(QMouseEvent*)));
+#endif
     }
 }

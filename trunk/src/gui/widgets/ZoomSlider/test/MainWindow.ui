@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>474</width>
+    <height>237</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QWidget" name="layoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>114</y>
+      <width>231</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QSlider" name="horizontalSlider">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="tickPosition">
+        <enum>QSlider::TicksAbove</enum>
+       </property>
+       <property name="tickInterval">
+        <number>0</number>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSpinBox" name="spinBox">
+       <property name="frame">
+        <bool>true</bool>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+       </property>
+       <property name="specialValueText">
+        <string/>
+       </property>
+       <property name="showGroupSeparator" stdset="0">
+        <bool>false</bool>
+       </property>
+       <property name="minimum">
+        <number>1</number>
+       </property>
+       <property name="displayIntegerBase">
+        <number>10</number>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="layoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>44</x>
+      <y>20</y>
+      <width>102</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Slider</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="lbSlider">
+       <property name="text">
+        <string>TextLabel</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QDoubleSpinBox" name="doubleSpinBox">
+    <property name="geometry">
+     <rect>
+      <x>320</x>
+      <y>130</y>
+      <width>68</width>
+      <height>23</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="AzZoomSlider" name="zoomSlider">
+    <property name="geometry">
+     <rect>
+      <x>190</x>
+      <y>10</y>
+      <width>166</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="whatsThis">
+     <string>The slider for control zoom in %</string>
+    </property>
+    <property name="maximumScale">
+     <double>8.000000000000000</double>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>474</width>
+     <height>19</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>AzZoomSlider</class>
+   <extends>QWidget</extends>
+   <header>AzZoomSlider.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>
