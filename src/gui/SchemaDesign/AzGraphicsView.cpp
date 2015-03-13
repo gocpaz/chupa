@@ -35,7 +35,7 @@ void AzGraphicsView::setScene(QGraphicsScene *scene) {
     AzGraphicsScene *azScene = dynamic_cast<AzGraphicsScene*>(scene);
     if (azScene) {
         connect(scene,SIGNAL(selectionChanged()),this,SLOT(selectionChanged()));
-        connect(azScene,SIGNAL(moveItemEvent(QPointF,QPointF)),this,SLOT(moveItemEvent(QPointF,QPointF)));
+        //connect(azScene,SIGNAL(moveItemEvent(QPointF,QPointF)),this,SLOT(moveItemEvent(QPointF,QPointF)));
     }
 }
 
@@ -46,8 +46,9 @@ void AzGraphicsView::drawForeground(QPainter * painter, const QRectF & rect) {
 }
 
 void AzGraphicsView::selectionChanged() {
-    if (mShowArrow)
+    if (mShowArrow) {
         mArrows.selectionChanged();
+    }
 }
 
 void AzGraphicsView::mousePressEvent(QMouseEvent * event) {

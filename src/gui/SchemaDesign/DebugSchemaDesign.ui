@@ -78,12 +78,12 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="">
+     <widget class="QWidget" name="layoutWidget">
       <property name="geometry">
        <rect>
         <x>160</x>
         <y>0</y>
-        <width>254</width>
+        <width>273</width>
         <height>16</height>
        </rect>
       </property>
@@ -98,7 +98,7 @@
        <item>
         <widget class="QLabel" name="sceneRect">
          <property name="text">
-          <string>SceneRect</string>
+          <string>SceneRectfloat</string>
          </property>
         </widget>
        </item>

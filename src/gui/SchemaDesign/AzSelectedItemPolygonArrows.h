@@ -39,7 +39,7 @@ public:
     inline AzTransformArrow::TransformType transformType() const    { return mTransformType; }
 
     void beginTransform(const QPoint&);
-    QSizeF newScale(const QPoint&);
+    QRect newScale(const QPoint&);
     qreal newRotate(const QPoint&);
     //qreal newShear(const QPoint&);
     void endTransform();
@@ -51,6 +51,7 @@ public:
 
     inline const QPolygon &arrow(int side) const               { return mArrowsPolygons[side]; } //out of range (NotArrow)
     inline const QRect& boundingRect() const                   { return mBoundingRect;         }
+    inline const QRect& originalTransformRect() const           { return mStartTransformRect;    }
 private:
     AzTransformArrow::Side mActiveArrow;                        /*! Active selected arrow */
     AzTransformArrow::Side mTransformArrow;                     /*! Active arrow if start transform */

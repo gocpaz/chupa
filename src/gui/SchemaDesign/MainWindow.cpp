@@ -9,7 +9,6 @@
 #include <math.h>
 
 #include "AzGraphicsScene.h"
-#include "AzGraphicsSvgItem.h"
 #include "AzGraphicsPoligonItem.h"
 #include "AzGraphicsView.h"
 #include "AzGraphicsItem.h"
@@ -98,18 +97,18 @@ void MainWindow::newView(const QString& name) {
 //}
 
 void MainWindow::showItemCoord() {
-    QGraphicsItem *item = (mCurrentDesignView->scene()->selectedItems().size() > 0) ? mCurrentDesignView->scene()->selectedItems()[0] : 0;
-    if (item) {
-        QRect rect = mCurrentDesignView->view()->mapFromScene(item->sceneBoundingRect()).boundingRect();
-        QRectF sceneRect = item->sceneBoundingRect();
-        mDebugWin->ui->sceneRect->setText(QString::number(sceneRect.x())+','+QString::number(sceneRect.y())+' '+QString::number(sceneRect.width())+'x'+QString::number(sceneRect.height()));
+//    QGraphicsItem *item = (mCurrentDesignView->scene()->selectedItems().size() > 0) ? mCurrentDesignView->scene()->selectedItems()[0] : 0;
+//    if (item) {
+//        QRect rect = mCurrentDesignView->view()->mapFromScene(item->sceneBoundingRect()).boundingRect();
+//        QRectF sceneRect = item->sceneBoundingRect();
+//        mDebugWin->ui->sceneRect->setText(QString::number(sceneRect.x())+','+QString::number(sceneRect.y())+' '+QString::number(sceneRect.width())+'x'+QString::number(sceneRect.height()));
 
-        mDebugWin->ui->viewRect->setText(QString::number(rect.x())+'x'+QString::number(rect.y()));
-        //mDebugWin->ui->lbViewSize->setText(QString::number(rect.width())+'x'+QString::number(rect.height()));
-    } else {
-        mDebugWin->ui->sceneRect->setText("");
-        mDebugWin->ui->viewRect->setText("");
-    }
+//        mDebugWin->ui->viewRect->setText(QString::number(rect.x())+'x'+QString::number(rect.y()));
+//        //mDebugWin->ui->lbViewSize->setText(QString::number(rect.width())+'x'+QString::number(rect.height()));
+//    } else {
+//        mDebugWin->ui->sceneRect->setText("");
+//        mDebugWin->ui->viewRect->setText("");
+//    }
 }
 
 void MainWindow::mouseMoveEventView(QMouseEvent *) {
@@ -145,15 +144,21 @@ void MainWindow::rotateLeft90() {
 }
 
 void MainWindow::rotateRight90() {
-    QGraphicsItem *qitem = 0;
-    if (mCurrentDesignView->scene()->selectedItems().size() > 0)
-        qitem = mCurrentDesignView->scene()->selectedItems()[0];
-    AzGraphicsSvgItem *item = dynamic_cast<AzGraphicsSvgItem *>(qitem);
-    if (item) {
-        QTransform trans;
-        trans.shear(-2,0);
-        item->setTransform(trans);
-    }
+//    QGraphicsItem *qitem = 0;
+//    if (mCurrentDesignView->scene()->selectedItems().size() > 0)
+//        qitem = mCurrentDesignView->scene()->selectedItems()[0];
+//    AzGraphicsSvgItem *item = dynamic_cast<AzGraphicsSvgItem *>(qitem);
+//    if (item) {
+//        QTransform trans;
+//        trans.shear(-2,0);
+//        item->setTransform(trans);
+//    }
+    //QGraphicsItemGroup *group = mCurrentDesignView->scene()->createItemGroup(mCurrentDesignView->scene()->selectedItems());
+
+//   AzGraphicsItemGroup *group =  mCurrentDesignView->createItemGroup(scene()->selectedItems());
+//   group->setFlag(QGraphicsItem::ItemIsSelectable,true);
+//   group->setFlag(QGraphicsItem::ItemIsMovable,true);
+
 }
 
 /*!

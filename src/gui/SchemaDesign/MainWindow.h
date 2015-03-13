@@ -22,7 +22,7 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-
+    inline const AzGraphicsScene* scene() const                 { return mCurrentDesignView->scene(); }
 
 public slots:
     void newView(const QString& name = "NoName");

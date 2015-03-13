@@ -1,85 +1,92 @@
 #include "AzGraphicsItem.h"
 
-#include <QDebug>
-#include "QPainter"
+#include <QBuffer>
+#include <QPainter>
 #include <QStyleOptionGraphicsItem>
+#include <QSvgGenerator>
+#include <QSvgRenderer>
 
-AzGraphicsItem::AzGraphicsItem():QGraphicsItem(){
-    mRect=QRect(0,0,100,100);
-    setFlag(QGraphicsItem::ItemIsSelectable,true);
-    setFlag(QGraphicsItem::ItemIsMovable,true);
+#include "AzChupa.h"
+
+/*!
+ * \class AzAbstractGraphicsItem
+ * class - for a multiple inheritance QGraphicsItem
+ */
+
+
+//----------------------------------------------------------------------
+
+AzGraphicsItemGroup::AzGraphicsItemGroup(QGraphicsItem *parent):QGraphicsItemGroup(parent) {
 }
 
-AzGraphicsItem::~AzGraphicsItem(){
+
+//-----------------------------------------------------------------------------------------------------
+
+AzGraphicsSvgItem::AzGraphicsSvgItem(QGraphicsItem *parent):QGraphicsSvgItem(parent) {
+     setFlag(ItemIsSelectable,true);
+     setFlag(ItemIsMovable,true);
+}
+
+AzGraphicsSvgItem::AzGraphicsSvgItem(const QString &fileName, QGraphicsItem * parent):QGraphicsSvgItem(fileName,parent) {
+     setFlag(ItemIsSelectable,true);
+     setFlag(ItemIsMovable,true);
+}
+
+AzGraphicsSvgItem::~AzGraphicsSvgItem() {
 
 }
 
 /*!
-    \internal
+ * \brief AzGraphicsSvgItem::mapTo
+ * \return данные, с учетом transform
+ * Возвращает изображение с учетом трансформации
+ */
+QByteArray AzGraphicsSvgItem::mapTo()  {
+    QBuffer buffer;
+    QSvgGenerator generator;
+    generator.setOutputDevice(&buffer);
+    QPainter painter;
+    const QStyleOptionGraphicsItem style;    //!!!not define style (selected border?)
+    qInstallMessageHandler(AzChupa::emptyMessageOutput);
+    painter.begin(&generator);
+        painter.setTransform(transform());
+        paint(&painter,&style);
+    painter.end();
+    qInstallMessageHandler(0);
+    return buffer.data();
+}
 
-    Highlights \a item as selected.
+/*!
+ * \brief AzGraphicsSvgItem::clone
+ * \param parent
+ * \return
+ * clone item with transform
+ */
+AzGraphicsSvgItem* AzGraphicsSvgItem::clone(QGraphicsItem* parent) { //!!!!!! убрать
+    QSvgRenderer* renderer = new QSvgRenderer(mapTo()); ///!!!!!!!!!!!!!!!!!!!!! leak
+    AzGraphicsSvgItem *item = new AzGraphicsSvgItem(parent);
+    item->setFlags(flags());
+    item->setSharedRenderer(renderer);
+    return item;
+}
 
-    NOTE: This function is a duplicate of qt_graphicsItem_highlightSelected() in qgraphicsitem.cpp!
-*/
-static void qt_graphicsItem_highlightSelected(
-    QGraphicsItem *item, QPainter *painter, const QStyleOptionGraphicsItem *option)
-{
-    const QRectF murect = painter->transform().mapRect(QRectF(0, 0, 1, 1));
-    if (qFuzzyIsNull(qMax(murect.width(), murect.height())))
+/*!
+ * \brief AzGraphicsSvgItem::fixTransform
+ * Переводит изражение после трансормации в "оригинальный" режим.
+ */
+void AzGraphicsSvgItem::fixTransform() {
+    if (transform().isIdentity())
         return;
-
-    const QRectF mbrect = painter->transform().mapRect(item->boundingRect());
-    if (qMin(mbrect.width(), mbrect.height()) < qreal(1.0))
-        return;
-
-    qreal itemPenWidth;
-    switch (item->type()) {
-        case QGraphicsEllipseItem::Type:
-            itemPenWidth = static_cast<QGraphicsEllipseItem *>(item)->pen().widthF();
-            break;
-        case QGraphicsPathItem::Type:
-            itemPenWidth = static_cast<QGraphicsPathItem *>(item)->pen().widthF();
-            break;
-        case QGraphicsPolygonItem::Type:
-            itemPenWidth = static_cast<QGraphicsPolygonItem *>(item)->pen().widthF();
-            break;
-        case QGraphicsRectItem::Type:
-            itemPenWidth = static_cast<QGraphicsRectItem *>(item)->pen().widthF();
-            break;
-        case QGraphicsSimpleTextItem::Type:
-            itemPenWidth = static_cast<QGraphicsSimpleTextItem *>(item)->pen().widthF();
-            break;
-        case QGraphicsLineItem::Type:
-            itemPenWidth = static_cast<QGraphicsLineItem *>(item)->pen().widthF();
-            break;
-        default:
-            itemPenWidth = 1.0;
-    }
-    const qreal pad = itemPenWidth / 2;
-
-    const qreal penWidth = 0; // cosmetic pen
-
-    const QColor fgcolor = option->palette.windowText().color();
-    const QColor bgcolor( // ensure good contrast against fgcolor
-        fgcolor.red()   > 127 ? 0 : 255,
-        fgcolor.green() > 127 ? 0 : 255,
-        fgcolor.blue()  > 127 ? 0 : 255);
-
-    painter->setPen(QPen(bgcolor, penWidth, Qt::SolidLine));
-    painter->setBrush(Qt::NoBrush);
-    painter->drawRect(item->boundingRect().adjusted(pad, pad, -pad, -pad));
-
-    painter->setPen(QPen(option->palette.windowText(), 0, Qt::DashLine));
-    painter->setBrush(Qt::NoBrush);
-    painter->drawRect(item->boundingRect().adjusted(pad, pad, -pad, -pad));
+    qDebug() << "Fix transform";
+    QRectF rect = sceneBoundingRect();
+    QSvgRenderer* renderer = new QSvgRenderer(mapTo()); ///!!!!!!!!!!!!!!!!!!!!! leak
+    resetTransform();
+    setSharedRenderer(renderer);
+    QPointF pos(rect.center().x()-boundingRect().width()/2,rect.center().y()-boundingRect().height()/2); //if round - fix center
+    setPos(pos);
 }
 
-void AzGraphicsItem::paint(QPainter * painter, const QStyleOptionGraphicsItem *option, QWidget *) {
-    painter->drawPolygon(mRect);
-    if (option->state & QStyle::State_Selected)
-        qt_graphicsItem_highlightSelected(this, painter, option);
+void AzGraphicsSvgItem::paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget) {
+    QGraphicsSvgItem::paint(painter,option,widget);
 }
 
-QRectF AzGraphicsItem::boundingRect() const {
-    return mRect;
-}

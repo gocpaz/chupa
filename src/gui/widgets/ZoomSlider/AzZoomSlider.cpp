@@ -20,6 +20,8 @@ AzZoomSlider::AzZoomSlider(QWidget *parent) : QWidget(parent) {
     setLayout(mLayout);
     mLayout->setMargin(0);
 
+    mMaximumScale = 0; //stupid init
+    mCurrentScale = 0;
     setMaximumScale(4);
     //setValue(2);
 
