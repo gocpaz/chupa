@@ -18,6 +18,10 @@ public:
 
     inline const AzGraphicsView* view() const           { return mView; }
     inline const AzGraphicsScene *scene() const         { return mScene; }
+    inline AzGraphicsScene *scene()                     { return mScene; }
+
+    AzGraphicsItemGroup * createItemGroup(const QList<QGraphicsItem *> & items);
+
     inline qreal scale() const                          { return mView->transform().m11(); }
 
 signals:

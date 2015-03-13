@@ -111,6 +111,8 @@
    <addaction name="actionCenterSelected"/>
    <addaction name="actionZoomOut"/>
    <addaction name="actionZoomIn"/>
+   <addaction name="actionGroup"/>
+   <addaction name="actionUngroup"/>
   </widget>
   <widget class="QToolBar" name="tbTransform">
    <property name="windowTitle">
@@ -178,6 +180,24 @@
    </property>
    <property name="toolTip">
     <string>Decrease zoom</string>
+   </property>
+  </action>
+  <action name="actionGroup">
+   <property name="icon">
+    <iconset resource="res.qrc">
+     <normaloff>:/btn/images/group.png</normaloff>:/btn/images/group.png</iconset>
+   </property>
+   <property name="text">
+    <string>group</string>
+   </property>
+  </action>
+  <action name="actionUngroup">
+   <property name="icon">
+    <iconset resource="res.qrc">
+     <normaloff>:/btn/images/ungroup.png</normaloff>:/btn/images/ungroup.png</iconset>
+   </property>
+   <property name="text">
+    <string>ungroup</string>
    </property>
   </action>
  </widget>

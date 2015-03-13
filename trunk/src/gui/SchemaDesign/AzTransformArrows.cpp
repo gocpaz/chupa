@@ -7,8 +7,8 @@
 
 #include <math.h>
 
-#include "AzGraphicsSvgItem.h"
 #include "AzGraphicsView.h"
+#include "AzGraphicsItem.h"
 #include "AzSelectedItemPolygonArrows.h"
 
 const Qt::GlobalColor normalColor       = Qt::yellow;
@@ -167,9 +167,9 @@ void AzTransformArrow::mouseReleaseEvent(QMouseEvent *event) {
     if (mArrows->activeTransformArrow() != NotArrow) {
         mView->scene()->invalidate(boundingRectToScene(),QGraphicsScene::ForegroundLayer); //restore color
         mArrows->setActiveTransformArrow(NotArrow);
-        AzGraphicsSvgItem *item = dynamic_cast<AzGraphicsSvgItem*> (selectedItem());
+        AzGraphicsItem *item = dynamic_cast<AzGraphicsItem*> (selectedItem());
         if (item) {
-            item->fixTransofm();
+            item->fixTransform();
         }
     }
 }
@@ -205,24 +205,20 @@ void AzTransformArrow::mouseClickOnSelectedItemEvent() {
  */
 void AzTransformArrow::mouseMoveScale(const QPoint& newPos) {
     if (!isHasSelectedItem())
-        return;
+            return;
 
-    QTransform trans;
-    QSizeF scale =  mArrows->newScale(newPos);
-    trans.scale(scale.width(),scale.height());
-    const QPointF scenePos = mView->mapToScene(newPos);
+    QRect scaledRect =  mArrows->newScale(newPos);
+    qreal scaleX = (qreal)scaledRect.width() / mArrows->originalTransformRect().width(); //calc scale
+    qreal scaleY = (qreal)scaledRect.height() / mArrows->originalTransformRect().height();
+    QTransform scaleTrans = QTransform::fromScale(scaleX,scaleY);
+
+    QTransform translateTrans;
+    const QPointF scaledScenePos = mView->mapToScene(mArrows->originalTransformRect().topLeft() + scaledRect.topLeft());  //calc scaled scene pos
+    const QPointF offsetScaledScenePos = scaledScenePos - mView->mapToScene(mArrows->originalTransformRect().topLeft());  //calc offset scene pos
+    translateTrans.translate(offsetScaledScenePos.x(),offsetScaledScenePos.y());
+
     QGraphicsItem *item = selectedItem();
-    item->setTransform(trans);
-
-    switch (mArrows->activeTransformArrow()) { //translate to pos
-        case NEPos: item->setPos(item->x(),scenePos.y());       break;
-        case NPos:  item->setPos(item->x(),scenePos.y());       break;
-        case NWPos: item->setPos(scenePos.x(),scenePos.y());    break;
-        case WPos:  item->setPos(scenePos.x(),item->y());       break;
-        case SWPos: item->setPos(scenePos.x(),item->y());       break;
-    default:
-        break;
-    }
+    item->setTransform(scaleTrans * translateTrans);
 }
 
 /*!

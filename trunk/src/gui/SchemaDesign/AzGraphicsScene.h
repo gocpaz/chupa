@@ -6,11 +6,14 @@
 #include "AzTransformArrows.h"
 #include "AzGraphicsPoligonItem.h"
 
-class AzGraphicsScene : public QGraphicsScene
-{
-Q_OBJECT
+#include "AzGraphicsItem.h"
+
+
+class AzGraphicsScene : public QGraphicsScene  {
+    Q_OBJECT
 public:
     AzGraphicsScene(QObject *parent = 0);
+    AzGraphicsItemGroup * createItemGroup(const QList<QGraphicsItem *> & items);
 signals:
     void moveItemEvent(const QPointF&,const QPointF&);
 protected:

@@ -9,31 +9,29 @@ DESTDIR = ../../../../bin
 INCLUDEPATH += ../../
 
 HEADERS += 	MainWindow.h \
-		AzGraphicsSvgItem.h \
 	    AzGraphicsView.h \
 	    AzGraphicsScene.h \
-	    AzGraphicsItem.h \
 	    DebugSchemaDesign.h \
 	    ../../AzChupa.h \
     DesignView.h \
     ../widgets/ZoomSlider/AzZoomSlider.h \
     AzTransformArrows.h \
-    AzSelectedItemPolygonArrows.h
+    AzSelectedItemPolygonArrows.h \
+    AzGraphicsItem.h
 
 CONFIG+=debug_and_release
 
 
 SOURCES += main.cpp \
 	   MainWindow.cpp \
-	    AzGraphicsSvgItem.cpp \
 	    AzGraphicsView.cpp \
 	    AzGraphicsScene.cpp \
-	    AzGraphicsItem.cpp \
 	    DebugSchemaDesign.cpp \
     DesignView.cpp \
     ../widgets/ZoomSlider/AzZoomSlider.cpp \
     AzTransformArrows.cpp \
-    AzSelectedItemPolygonArrows.cpp
+    AzSelectedItemPolygonArrows.cpp \
+    AzGraphicsItem.cpp
 
 
 FORMS    += MainWindow.ui

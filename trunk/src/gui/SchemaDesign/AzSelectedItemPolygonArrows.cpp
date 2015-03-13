@@ -235,30 +235,43 @@ void AzSelectedItemPolygonArrows::endTransform() {
 }
 
 /*!
- * calculate scale with newPos
+ * calculate new scaled rectangle with newPos
+ * return QRect with scaled height,width and pos offset original rect
  */
-QSizeF AzSelectedItemPolygonArrows::newScale(const QPoint& newPos) {
-    int height = mStartTransformRect.height(); //original height
-    int width  = mStartTransformRect.width();  //original width
-
-    int scaleHeight = height; //keep original pos - do not need calculate in some case
-    int scaleWidth  = width;
+QRect AzSelectedItemPolygonArrows::newScale(const QPoint& newPos) {
+    QSize startSize = mStartTransformRect.size(); //orininal size
+    QSize scaleSize = startSize;//keep original pos - do not need calculate in some case
+    QPoint scalePos;
 
     switch (mTransformArrow) {
-        case AzTransformArrow::SPos:   scaleHeight = newPos.y() - mStartTransformRect.y();    break;
-        case AzTransformArrow::SEPos:  scaleWidth  = newPos.x() - mStartTransformRect.x();  scaleHeight = newPos.y() - mStartTransformRect.y();   break;
-        case AzTransformArrow::EPos:   scaleWidth  = newPos.x() - mStartTransformRect.x();   break;
-        case AzTransformArrow::NEPos:  scaleWidth  = newPos.x() - mStartTransformRect.x(); scaleHeight = -newPos.y() + mStartTransformRect.bottom(); break;
-        case AzTransformArrow::NPos:   scaleHeight = -newPos.y() + mStartTransformRect.bottom(); break;
-        case AzTransformArrow::NWPos:  scaleHeight = -newPos.y() + mStartTransformRect.bottom(); scaleWidth =  -newPos.x() + mStartTransformRect.right(); break;
-        case AzTransformArrow::WPos:   scaleWidth =  -newPos.x() + mStartTransformRect.right();  break;
-        case AzTransformArrow::SWPos:  scaleHeight = newPos.y() - mStartTransformRect.y();  scaleWidth =  -newPos.x() + mStartTransformRect.right(); break;
+        case AzTransformArrow::SPos:   scaleSize.setHeight(newPos.y() - mStartTransformRect.y());    break;
+        case AzTransformArrow::SEPos:  scaleSize.setWidth(newPos.x() - mStartTransformRect.x()); scaleSize.setHeight(newPos.y() - mStartTransformRect.y());   break;
+        case AzTransformArrow::EPos:   scaleSize.setWidth(newPos.x() - mStartTransformRect.x());   break;
+        case AzTransformArrow::NEPos:
+            scaleSize.setWidth(newPos.x() - mStartTransformRect.x()); scaleSize.setHeight(-newPos.y() + mStartTransformRect.bottom());
+            scalePos.setY(startSize.height() - scaleSize.height());
+            break;
+        case AzTransformArrow::NPos:
+            scaleSize.setHeight(-newPos.y() + mStartTransformRect.bottom());
+            scalePos.setY(startSize.height() - scaleSize.height());
+            break;
+        case AzTransformArrow::NWPos:
+            scaleSize.setHeight(-newPos.y() + mStartTransformRect.bottom());scaleSize.setWidth(-newPos.x() + mStartTransformRect.right());
+            scalePos.setX(startSize.width() - scaleSize.width());
+            scalePos.setY(startSize.height() - scaleSize.height());
+            break;
+        case AzTransformArrow::WPos:
+            scaleSize.setWidth(-newPos.x() + mStartTransformRect.right());
+            scalePos.setX(startSize.width() - scaleSize.width());
+            break;
+        case AzTransformArrow::SWPos:
+            scaleSize.setHeight(newPos.y() - mStartTransformRect.y());scaleSize.setWidth(-newPos.x() + mStartTransformRect.right());
+            scalePos.setX(startSize.width() - scaleSize.width());
+            break;
     default:
             break;
     }
-    qreal scaleY = (qreal)(scaleHeight) / height;
-    qreal scaleX = (qreal)(scaleWidth) / width;
-    return QSizeF(scaleX,scaleY);
+    return QRect(scalePos,scaleSize);
 }
 
 /*!

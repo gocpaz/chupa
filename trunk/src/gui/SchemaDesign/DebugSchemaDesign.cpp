@@ -5,9 +5,8 @@ DebugSchemaDesign::DebugSchemaDesign(QWidget *parent) : QWidget(parent),ui(new U
       ui->setupUi(this);
 }
 
-DebugSchemaDesign::~DebugSchemaDesign()
-{
-
+DebugSchemaDesign::~DebugSchemaDesign() {
+delete ui;
 }
 
 void DebugSchemaDesign::addMessage(const QString& message) {

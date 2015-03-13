@@ -7,7 +7,7 @@
 
 DesignView::DesignView(QWidget *parent) : QWidget(parent) {
     mScene = new AzGraphicsScene;
-    mScene->setSceneRect(-20,-20,5000,2000);
+    mScene->setSceneRect(-0,-0,5000,2000);
     mView = new AzGraphicsView(mScene);
     mView->centerOn(0,0);
     mView->setShowSelectedArrow(true);
@@ -33,5 +33,10 @@ DesignView::~DesignView() {
 void DesignView::setScale(qreal scale) {
     mView->setTransform(QTransform::fromScale(scale,scale));
     emit scaleChanged(scale);
+}
+
+
+AzGraphicsItemGroup * DesignView::createItemGroup(const QList<QGraphicsItem *> & items) {
+   return  mScene->createItemGroup(scene()->selectedItems());
 }
 

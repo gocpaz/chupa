@@ -28,8 +28,8 @@ protected:
     void drawForeground(QPainter * painter, const QRectF & rect);
 private:
     void setScene(QGraphicsScene *);
-    AzTransformArrow mArrows; //убрать, нет смысла, заменить на динамику, проверять на валидность объекта
-    bool mShowArrow;
+    AzTransformArrow mArrows;
+    bool mShowArrow;  // !!!убрать, нет смысла, заменить на динамику, проверять на валидность объекта
 };
 
 #endif // AZGRAPHICSVIEW_H
